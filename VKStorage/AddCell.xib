@@ -1,0 +1,101 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<document type="com.apple.InterfaceBuilder3.CocoaTouch.XIB" version="3.0" toolsVersion="9531" systemVersion="15C50" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES">
+    <dependencies>
+        <deployment identifier="iOS"/>
+        <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="9529"/>
+        <capability name="Aspect ratio constraints" minToolsVersion="5.1"/>
+        <capability name="Constraints to layout margins" minToolsVersion="6.0"/>
+    </dependencies>
+    <objects>
+        <placeholder placeholderIdentifier="IBFilesOwner" id="-1" userLabel="File's Owner"/>
+        <placeholder placeholderIdentifier="IBFirstResponder" id="-2" customClass="UIResponder"/>
+        <tableViewCell contentMode="scaleToFill" selectionStyle="default" indentationWidth="10" reuseIdentifier="AddCell" rowHeight="48" id="KGk-i7-Jjw" customClass="AddCell" customModule="VKStorage" customModuleProvider="target">
+            <rect key="frame" x="0.0" y="0.0" width="250" height="48"/>
+            <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
+            <tableViewCellContentView key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" tableViewCell="KGk-i7-Jjw" id="H2p-sc-9uM">
+                <rect key="frame" x="0.0" y="0.0" width="250" height="47"/>
+                <autoresizingMask key="autoresizingMask"/>
+                <subviews>
+                    <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="249" verticalHuggingPriority="249" horizontalCompressionResistancePriority="751" verticalCompressionResistancePriority="751" text="Label" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="ZAM-M1-p6S">
+                        <rect key="frame" x="209" y="16" width="33" height="16"/>
+                        <fontDescription key="fontDescription" type="system" pointSize="13"/>
+                        <color key="textColor" cocoaTouchSystemColor="darkTextColor"/>
+                        <nil key="highlightedColor"/>
+                    </label>
+                    <imageView userInteractionEnabled="NO" contentMode="scaleToFill" horizontalHuggingPriority="251" verticalHuggingPriority="251" horizontalCompressionResistancePriority="749" verticalCompressionResistancePriority="749" translatesAutoresizingMaskIntoConstraints="NO" id="Doe-kC-vX9">
+                        <rect key="frame" x="13" y="-67" width="181" height="181"/>
+                        <constraints>
+                            <constraint firstAttribute="height" constant="30" id="2Jh-dM-V12"/>
+                            <constraint firstAttribute="height" constant="25" id="45e-rf-mQd"/>
+                            <constraint firstAttribute="width" secondItem="Doe-kC-vX9" secondAttribute="height" multiplier="15:17" id="ALQ-wq-0Di"/>
+                            <constraint firstAttribute="width" constant="25" id="EW4-AY-Lwd"/>
+                            <constraint firstAttribute="width" secondItem="Doe-kC-vX9" secondAttribute="height" multiplier="1:1" id="MrF-Bi-ndh"/>
+                            <constraint firstAttribute="width" secondItem="Doe-kC-vX9" secondAttribute="height" multiplier="1:1" id="Rrs-g2-fJV"/>
+                            <constraint firstAttribute="width" constant="20" id="Z3g-X8-HZM"/>
+                            <constraint firstAttribute="width" secondItem="Doe-kC-vX9" secondAttribute="height" multiplier="10:17" id="ZGY-Ut-oEq"/>
+                            <constraint firstAttribute="width" constant="20" id="ZQu-p7-7AN"/>
+                            <constraint firstAttribute="height" constant="25" id="bRA-MX-iGm"/>
+                            <constraint firstAttribute="height" constant="34" id="eHh-et-yGW"/>
+                            <constraint firstAttribute="width" secondItem="Doe-kC-vX9" secondAttribute="height" multiplier="1:1" id="eww-H4-h9N"/>
+                            <constraint firstAttribute="width" secondItem="Doe-kC-vX9" secondAttribute="height" multiplier="1:1" id="fUJ-KW-ARL"/>
+                            <constraint firstAttribute="width" constant="25" id="ffV-ga-WfM"/>
+                            <constraint firstAttribute="height" constant="25" id="hpW-2H-va3"/>
+                            <constraint firstAttribute="width" constant="25" id="jyV-wO-eV0"/>
+                        </constraints>
+                        <variation key="default">
+                            <mask key="constraints">
+                                <exclude reference="2Jh-dM-V12"/>
+                                <exclude reference="45e-rf-mQd"/>
+                                <exclude reference="ALQ-wq-0Di"/>
+                                <exclude reference="EW4-AY-Lwd"/>
+                                <exclude reference="Rrs-g2-fJV"/>
+                                <exclude reference="Z3g-X8-HZM"/>
+                                <exclude reference="ZGY-Ut-oEq"/>
+                                <exclude reference="ZQu-p7-7AN"/>
+                                <exclude reference="bRA-MX-iGm"/>
+                                <exclude reference="eHh-et-yGW"/>
+                                <exclude reference="eww-H4-h9N"/>
+                                <exclude reference="fUJ-KW-ARL"/>
+                                <exclude reference="ffV-ga-WfM"/>
+                                <exclude reference="hpW-2H-va3"/>
+                                <exclude reference="jyV-wO-eV0"/>
+                            </mask>
+                        </variation>
+                    </imageView>
+                </subviews>
+                <constraints>
+                    <constraint firstItem="ZAM-M1-p6S" firstAttribute="leading" secondItem="Doe-kC-vX9" secondAttribute="trailing" constant="15" id="65s-3J-sTY"/>
+                    <constraint firstItem="Doe-kC-vX9" firstAttribute="centerY" secondItem="H2p-sc-9uM" secondAttribute="centerY" id="6SE-r7-OFv"/>
+                    <constraint firstItem="Doe-kC-vX9" firstAttribute="centerX" secondItem="H2p-sc-9uM" secondAttribute="centerX" id="6tG-HN-CET"/>
+                    <constraint firstAttribute="bottomMargin" secondItem="ZAM-M1-p6S" secondAttribute="bottom" constant="6" id="Aac-NV-h6i"/>
+                    <constraint firstAttribute="topMargin" secondItem="Doe-kC-vX9" secondAttribute="top" id="HEX-HA-iX7"/>
+                    <constraint firstItem="ZAM-M1-p6S" firstAttribute="top" secondItem="H2p-sc-9uM" secondAttribute="topMargin" constant="7" id="I7K-AN-Tkf"/>
+                    <constraint firstAttribute="topMargin" secondItem="Doe-kC-vX9" secondAttribute="top" id="JcE-GW-vAD"/>
+                    <constraint firstItem="Doe-kC-vX9" firstAttribute="top" secondItem="H2p-sc-9uM" secondAttribute="topMargin" id="Uz1-AD-7P1"/>
+                    <constraint firstAttribute="trailingMargin" secondItem="ZAM-M1-p6S" secondAttribute="trailing" id="elb-FF-GXI"/>
+                    <constraint firstAttribute="leadingMargin" secondItem="Doe-kC-vX9" secondAttribute="leading" constant="-5" id="kAp-aB-6BX"/>
+                    <constraint firstItem="ZAM-M1-p6S" firstAttribute="centerY" secondItem="Doe-kC-vX9" secondAttribute="centerY" id="kmV-c8-aap"/>
+                    <constraint firstAttribute="bottomMargin" secondItem="Doe-kC-vX9" secondAttribute="bottom" id="ozY-hU-Plv"/>
+                    <constraint firstItem="ZAM-M1-p6S" firstAttribute="leading" secondItem="Doe-kC-vX9" secondAttribute="trailing" constant="15" id="smb-DQ-MCs"/>
+                </constraints>
+                <variation key="default">
+                    <mask key="constraints">
+                        <exclude reference="6tG-HN-CET"/>
+                        <exclude reference="HEX-HA-iX7"/>
+                        <exclude reference="JcE-GW-vAD"/>
+                        <exclude reference="Uz1-AD-7P1"/>
+                        <exclude reference="ozY-hU-Plv"/>
+                        <exclude reference="Aac-NV-h6i"/>
+                        <exclude reference="I7K-AN-Tkf"/>
+                        <exclude reference="smb-DQ-MCs"/>
+                    </mask>
+                </variation>
+            </tableViewCellContentView>
+            <connections>
+                <outlet property="iconImageView" destination="Doe-kC-vX9" id="wfn-Ix-lkA"/>
+                <outlet property="uploadTypeLabel" destination="ZAM-M1-p6S" id="mfa-EG-Ump"/>
+            </connections>
+            <point key="canvasLocation" x="186" y="295"/>
+        </tableViewCell>
+    </objects>
+</document>
