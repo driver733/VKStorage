@@ -27,7 +27,7 @@ class FilesVC: UIViewController {
     for _ in 1...10 {
         urls.append(NSBundle.mainBundle().URLForResource("1", withExtension: "jpg")!)
     }
-    UploadController.uploadFilesFromURLs(urls)
+    //UploadController.uploadFilesFromURLs(urls)
     
     view = tableView
     tableView.dataSource = self

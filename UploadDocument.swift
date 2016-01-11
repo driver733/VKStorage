@@ -19,14 +19,14 @@ class UploadDocument {
   var tags: String?
   /// <#Description#>
   var progress: Int64?
-    
   
+  var url: NSURL?
   
   func upload() -> BFTask {
       
     return getUploadServer().continueWithSuccessBlock({ (task: BFTask) -> AnyObject? in
       let vkURL = task.result as! String
-      return self.uploadToDocs(vkURL, fileWithURL: url).continueWithSuccessBlock({ (task: BFTask) -> AnyObject? in
+      return self.uploadToDocs(vkURL, fileWithURL: self.url!).continueWithSuccessBlock({ (task: BFTask) -> AnyObject? in
         let fileName = task.result as! String
         return self.saveToDocs(fileName).continueWithBlock({ (task: BFTask) -> AnyObject? in
           return nil
@@ -49,29 +49,7 @@ class UploadDocument {
     return task.task
   }
   
-  private func uploadToDocs(URL: String, fileWithURL: NSURL) -> BFTask {
-    let task = BFTaskCompletionSource()
-    
-    upload(
-      .POST,
-      URL,
-      multipartFormData: { multipartFormData in
-        multipartFormData.appendBodyPart(fileURL: fileWithURL, name:"file")
-      },
-      encodingCompletion: { encodingResult in
-        switch encodingResult {
-        case .Success(let upload, _, _):
-          upload.responseJSON { response in
-              let json = JSON(response.result.value!)
-              task.setResult(json["file"].string)
-            }
-        case .Failure(_):
-          task.setError(NSError(domain: "EncodingError", code: 1, userInfo: nil))
-        }
-      }
-    )
-    return task.task
-  }
+
   
   private func saveToDocs(file: String) -> BFTask {
     let task = BFTaskCompletionSource()
@@ -98,19 +76,44 @@ class UploadDocument {
     return task.task
   }
   
-  
-  func uploadVK(uploadServerURL: NSURL) -> BFTask {
+  private func uploadToDocs(URL: String, fileWithURL: NSURL) -> BFTask {
     let task = BFTaskCompletionSource()
-    upload(.POST, uploadServerURL, data: data)
-    .progress({ (_, totalBytesWritten: Int64, totalBytesExpectedToWrite: Int64) -> Void in
-      
-    })
-    .responseJSON(completionHandler: { (response: Response<AnyObject, NSError>) -> Void in
-      let json = JSON(response.result.value!)
-      print(json)
-    })
+    
+    upload(
+      .POST,
+      URL,
+      multipartFormData: { multipartFormData in
+        multipartFormData.appendBodyPart(fileURL: fileWithURL, name:"file")
+      },
+      encodingCompletion: { encodingResult in
+        switch encodingResult {
+        case .Success(let upload, _, _):
+          upload.responseJSON { response in
+            let json = JSON(response.result.value!)
+            task.setResult(json["file"].string)
+          }
+        case .Failure(_):
+          task.setError(NSError(domain: "EncodingError", code: 1, userInfo: nil))
+        }
+      }
+    )
+    
     return task.task
   }
+  
+  
+//  func uploadVK(uploadServerURL: NSURL) -> BFTask {
+//    let task = BFTaskCompletionSource()
+//    upload(.POST, uploadServerURL, data: data)
+//    .progress({ (_, totalBytesWritten: Int64, totalBytesExpectedToWrite: Int64) -> Void in
+//      
+//    })
+//    .responseJSON(completionHandler: { (response: Response<AnyObject, NSError>) -> Void in
+//      let json = JSON(response.result.value!)
+//      print(json)
+//    })
+//    return task.task
+//  }
   
   
 }
