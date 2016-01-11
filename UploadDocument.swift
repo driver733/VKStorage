@@ -19,14 +19,14 @@ class UploadDocument {
   var tags: String?
   /// <#Description#>
   var progress: Int64?
+  /// <#Description#>
+  var url: NSURL!
   
-  var url: NSURL?
-  
-  func upload() -> BFTask {
+  func uploadDoc() -> BFTask {
       
     return getUploadServer().continueWithSuccessBlock({ (task: BFTask) -> AnyObject? in
       let vkURL = task.result as! String
-      return self.uploadToDocs(vkURL, fileWithURL: self.url!).continueWithSuccessBlock({ (task: BFTask) -> AnyObject? in
+      return self.uploadToDocs(vkURL, fileWithURL: self.url).continueWithSuccessBlock({ (task: BFTask) -> AnyObject? in
         let fileName = task.result as! String
         return self.saveToDocs(fileName).continueWithBlock({ (task: BFTask) -> AnyObject? in
           return nil
@@ -88,6 +88,9 @@ class UploadDocument {
       encodingCompletion: { encodingResult in
         switch encodingResult {
         case .Success(let upload, _, _):
+          upload.progress { _, totalBytesWritten, totalBytesExpectedToWrite in
+            //implement progress here
+          }
           upload.responseJSON { response in
             let json = JSON(response.result.value!)
             task.setResult(json["file"].string)
@@ -100,21 +103,6 @@ class UploadDocument {
     
     return task.task
   }
-  
-  
-//  func uploadVK(uploadServerURL: NSURL) -> BFTask {
-//    let task = BFTaskCompletionSource()
-//    upload(.POST, uploadServerURL, data: data)
-//    .progress({ (_, totalBytesWritten: Int64, totalBytesExpectedToWrite: Int64) -> Void in
-//      
-//    })
-//    .responseJSON(completionHandler: { (response: Response<AnyObject, NSError>) -> Void in
-//      let json = JSON(response.result.value!)
-//      print(json)
-//    })
-//    return task.task
-//  }
-  
   
 }
 
