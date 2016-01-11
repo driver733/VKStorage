@@ -19,19 +19,72 @@ class UploadDocument {
   var tags: String?
   /// <#Description#>
   var progress: Int64?
+    
   
   
-  class func getUploadServer() -> BFTask {
+  func upload() -> BFTask {
+      
+    return getUploadServer().continueWithSuccessBlock({ (task: BFTask) -> AnyObject? in
+      let vkURL = task.result as! String
+      return self.uploadToDocs(vkURL, fileWithURL: url).continueWithSuccessBlock({ (task: BFTask) -> AnyObject? in
+        let fileName = task.result as! String
+        return self.saveToDocs(fileName).continueWithBlock({ (task: BFTask) -> AnyObject? in
+          return nil
+        })
+      })
+    })
+      
+  }
+  
+  private func getUploadServer() -> BFTask {
     let task = BFTaskCompletionSource()
+    
     let req = VKApiDocs().getUploadServer()
     req.executeWithResultBlock({ (response: VKResponse!) -> Void in
-      let json = JSON(response.json)
-      let uploadServerURL = NSURL(string: json["response"]["upload_url"].stringValue)
-      task.setResult(uploadServerURL)
-      }) { (error: NSError!) -> Void in
+        let json = JSON(response.json)
+        let uploadServerURL = json["upload_url"].string!
+        task.setResult(uploadServerURL)
+        }) { (error: NSError!) -> Void in
     }
     return task.task
   }
+  
+  private func uploadToDocs(URL: String, fileWithURL: NSURL) -> BFTask {
+    let task = BFTaskCompletionSource()
+    
+    upload(
+      .POST,
+      URL,
+      multipartFormData: { multipartFormData in
+        multipartFormData.appendBodyPart(fileURL: fileWithURL, name:"file")
+      },
+      encodingCompletion: { encodingResult in
+        switch encodingResult {
+        case .Success(let upload, _, _):
+          upload.responseJSON { response in
+              let json = JSON(response.result.value!)
+              task.setResult(json["file"].string)
+            }
+        case .Failure(_):
+          task.setError(NSError(domain: "EncodingError", code: 1, userInfo: nil))
+        }
+      }
+    )
+    return task.task
+  }
+  
+  private func saveToDocs(file: String) -> BFTask {
+    let task = BFTaskCompletionSource()
+    VKApiDocs().save(file).executeWithResultBlock({(
+      response: VKResponse!) -> Void in
+      task.setResult("Successfuly loaded file")
+      },
+      errorBlock: {(error: NSError!) -> Void in
+        task.setError(error)
+    })
+    return task.task
+  }
+
   
   class func getWallUploadServer() -> BFTask {
     let task = BFTaskCompletionSource()
@@ -59,21 +112,6 @@ class UploadDocument {
     return task.task
   }
   
-  func save() -> BFTask {
-    let task = BFTaskCompletionSource()
-    var req: VKRequest!
-    if let tags = tags {
-      req = VKApiDocs().save(String(data), andTitle: title, andTags: tags)
-    } else {
-      req = VKApiDocs().save(String(data), andTitle: title)
-    }
-    req.executeWithResultBlock({ (response: VKResponse!) -> Void in
-      
-      }) { (error: NSError!) -> Void in
-        
-    }
-    return task.task
-  }
   
 }
 

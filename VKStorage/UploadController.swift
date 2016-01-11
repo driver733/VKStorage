@@ -10,44 +10,67 @@ import Foundation
 
 class UploadController {
 
-    static func uploadFiles(files: [NSURL]?) -> Void {
-        if let fileURL = NSBundle.mainBundle().URLForResource("1", withExtension: "jpg") {
-            if let _ = NSData(contentsOfURL: fileURL) {
-                let myRequest = VKRequest(method: "docs.getUploadServer", andParameters: nil)
-                myRequest.executeWithResultBlock(
-                    { (response: VKResponse!) -> Void in
-                        var json = JSON(response.json)
-                        if let uploadURL = json["upload_url"].string {
-                            print(uploadURL)
-                            
-                            upload(
-                                .POST,
-                                uploadURL,
-                                multipartFormData: { multipartFormData in
-                                    multipartFormData.appendBodyPart(fileURL: fileURL, name:"file")
-                                },
-                                encodingCompletion: { encodingResult in
-                                    switch encodingResult {
-                                    case .Success(let upload, _, _):
-                                        upload.responseJSON { response in
-                                            json = JSON(response.result.value!)
-                                            VKApiDocs().save(json["file"].string).executeWithResultBlock({ (response: VKResponse!) -> Void in
-                                                print(response)
-                                                }, errorBlock: { (error: NSError!) -> Void in
-                                                    print(error)
-                                            })
-                                        }
-                                        case .Failure(let encodingError):
-                                            print(encodingError)
-                                    }
-                                }
-                            )
-                        }
-                    }, errorBlock: {(error: NSError!) -> Void in
-                        print(error)
+    func upload(url: NSURL) -> BFTask {
+        
+        return getUploadServer().continueWithSuccessBlock({ (task: BFTask) -> AnyObject? in
+            let vkURL = task.result as! String
+            return self.uploadToDocs(vkURL, fileWithURL: url).continueWithSuccessBlock({ (task: BFTask) -> AnyObject? in
+                let fileName = task.result as! String
+                return self.saveToDocs(fileName).continueWithBlock({ (task: BFTask) -> AnyObject? in
+                    return nil
                 })
-            }
+            })
+        })
+        
+    }
+    
+    private func getUploadServer() -> BFTask {
+        let task = BFTaskCompletionSource()
+        
+        let req = VKApiDocs().getUploadServer()
+        req.executeWithResultBlock({ (response: VKResponse!) -> Void in
+            let json = JSON(response.json)
+            let uploadServerURL = json["upload_url"].string!
+            task.setResult(uploadServerURL)
+            }) { (error: NSError!) -> Void in
         }
+        return task.task
+    }
+    
+    private func uploadToDocs(URL: String, fileWithURL: NSURL) -> BFTask {
+        let task = BFTaskCompletionSource()
+
+        upload(
+            .POST,
+            URL,
+            multipartFormData: { multipartFormData in
+                multipartFormData.appendBodyPart(fileURL: fileWithURL, name:"file")
+            },
+            encodingCompletion: { encodingResult in
+                switch encodingResult {
+                case .Success(let upload, _, _):
+                    upload.responseJSON { response in
+                        let json = JSON(response.result.value!)
+                        task.setResult(json["file"].string)
+                    }
+                case .Failure(_):
+                    task.setError(NSError(domain: "EncodingError", code: 1, userInfo: nil))
+                }
+            }
+        )
+        return task.task
+    }
+    
+    private func saveToDocs(file: String) -> BFTask {
+        let task = BFTaskCompletionSource()
+        VKApiDocs().save(file).executeWithResultBlock({(
+            response: VKResponse!) -> Void in
+            task.setResult("Successfuly loaded file")
+            },
+            errorBlock: {(error: NSError!) -> Void in
+                task.setError(error)
+        })
+        return task.task
     }
     
 }

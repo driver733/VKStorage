@@ -22,7 +22,13 @@ class FilesVC: UIViewController {
 
   override func viewDidLoad() {
     super.viewDidLoad()
-    UploadController.uploadFiles(nil)
+    
+    var urls = [NSURL]()
+    for _ in 1...10 {
+        urls.append(NSBundle.mainBundle().URLForResource("1", withExtension: "jpg")!)
+    }
+    UploadController.uploadFilesFromURLs(urls)
+    
     view = tableView
     tableView.dataSource = self
     tableView.delegate = self
