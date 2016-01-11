@@ -22,6 +22,7 @@ class FilesVC: UIViewController {
 
   override func viewDidLoad() {
     super.viewDidLoad()
+    UploadController.uploadFiles(nil)
     view = tableView
     tableView.dataSource = self
     tableView.delegate = self

@@ -1,0 +1,30 @@
+{
+  "DVTSourceControlWorkspaceBlueprintPrimaryRemoteRepositoryKey" : "BDBD0C7DD3C4FFA98B20AFCBC3C44DD4AC293019",
+  "DVTSourceControlWorkspaceBlueprintWorkingCopyRepositoryLocationsKey" : {
+
+  },
+  "DVTSourceControlWorkspaceBlueprintWorkingCopyStatesKey" : {
+    "BDBD0C7DD3C4FFA98B20AFCBC3C44DD4AC293019" : 0,
+    "966D60AE252B0464B10AF01FA613AB135E531608" : 0
+  },
+  "DVTSourceControlWorkspaceBlueprintIdentifierKey" : "154C3D76-75F3-464C-89C9-057A7E223DD8",
+  "DVTSourceControlWorkspaceBlueprintWorkingCopyPathsKey" : {
+    "BDBD0C7DD3C4FFA98B20AFCBC3C44DD4AC293019" : "vkstorage\/",
+    "966D60AE252B0464B10AF01FA613AB135E531608" : ""
+  },
+  "DVTSourceControlWorkspaceBlueprintNameKey" : "VKStorage",
+  "DVTSourceControlWorkspaceBlueprintVersion" : 204,
+  "DVTSourceControlWorkspaceBlueprintRelativePathToProjectKey" : "VKStorage.xcworkspace",
+  "DVTSourceControlWorkspaceBlueprintRemoteRepositoriesKey" : [
+    {
+      "DVTSourceControlWorkspaceBlueprintRemoteRepositoryURLKey" : "github.com:BIBO-RAM\/char-server.git",
+      "DVTSourceControlWorkspaceBlueprintRemoteRepositorySystemKey" : "com.apple.dt.Xcode.sourcecontrol.Git",
+      "DVTSourceControlWorkspaceBlueprintRemoteRepositoryIdentifierKey" : "966D60AE252B0464B10AF01FA613AB135E531608"
+    },
+    {
+      "DVTSourceControlWorkspaceBlueprintRemoteRepositoryURLKey" : "github.com:driver733\/VKStorage.git",
+      "DVTSourceControlWorkspaceBlueprintRemoteRepositorySystemKey" : "com.apple.dt.Xcode.sourcecontrol.Git",
+      "DVTSourceControlWorkspaceBlueprintRemoteRepositoryIdentifierKey" : "BDBD0C7DD3C4FFA98B20AFCBC3C44DD4AC293019"
+    }
+  ]
+}

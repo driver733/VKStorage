@@ -51,6 +51,8 @@
 		8FEB05D21C40997B0041F37C /* AddCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8FEB05D01C40997B0041F37C /* AddCell.swift */; };
 		8FEB05D31C40997B0041F37C /* AddCell.xib in Resources */ = {isa = PBXBuildFile; fileRef = 8FEB05D11C40997B0041F37C /* AddCell.xib */; };
 		94C4AE5029EBE7AB6E1135B8 /* libPods-VKStorage.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 3A941FE013B6AEF7AE37929B /* libPods-VKStorage.a */; };
+		961027111C4208DE007B4588 /* UploadController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 961027101C4208DE007B4588 /* UploadController.swift */; };
+		961027131C42227B007B4588 /* 1.jpg in Resources */ = {isa = PBXBuildFile; fileRef = 961027121C42227B007B4588 /* 1.jpg */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -125,6 +127,8 @@
 		8FEB05AB1C3F647E0041F37C /* UploadDocument.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = UploadDocument.swift; path = ../UploadDocument.swift; sourceTree = "<group>"; };
 		8FEB05D01C40997B0041F37C /* AddCell.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = AddCell.swift; sourceTree = "<group>"; };
 		8FEB05D11C40997B0041F37C /* AddCell.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = AddCell.xib; sourceTree = "<group>"; };
+		961027101C4208DE007B4588 /* UploadController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = UploadController.swift; sourceTree = "<group>"; };
+		961027121C42227B007B4588 /* 1.jpg */ = {isa = PBXFileReference; lastKnownFileType = image.jpeg; path = 1.jpg; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -211,6 +215,7 @@
 		8F4785861C38A75B00883E48 /* VKStorage */ = {
 			isa = PBXGroup;
 			children = (
+				9610270F1C4208B7007B4588 /* Upload */,
 				8FEB05D41C409E290041F37C /* AddCell */,
 				8FEB05871C3F0D8F0041F37C /* DocumentCell */,
 				8FEB05881C3F0DD70041F37C /* Model */,
@@ -314,6 +319,15 @@
 				8FEB05D11C40997B0041F37C /* AddCell.xib */,
 			);
 			name = AddCell;
+			sourceTree = "<group>";
+		};
+		9610270F1C4208B7007B4588 /* Upload */ = {
+			isa = PBXGroup;
+			children = (
+				961027121C42227B007B4588 /* 1.jpg */,
+				961027101C4208DE007B4588 /* UploadController.swift */,
+			);
+			name = Upload;
 			sourceTree = "<group>";
 		};
 		A24AAE0C0E461B845D8E970C /* Pods */ = {
@@ -447,6 +461,7 @@
 				8F26620E1C3EDC7A009F00C6 /* DocumentCell.xib in Resources */,
 				8FEB059F1C3F41B60041F37C /* Info.plist in Resources */,
 				8F4785941C38A75B00883E48 /* LaunchScreen.storyboard in Resources */,
+				961027131C42227B007B4588 /* 1.jpg in Resources */,
 				8F4785911C38A75B00883E48 /* Assets.xcassets in Resources */,
 				8F4606821C3C0D63007945D1 /* LoginVC.xib in Resources */,
 				8FEB05D31C40997B0041F37C /* AddCell.xib in Resources */,
@@ -522,6 +537,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				961027111C4208DE007B4588 /* UploadController.swift in Sources */,
 				8FEB05A61C3F41B60041F37C /* Result.swift in Sources */,
 				8FEB05A21C3F41B60041F37C /* ParameterEncoding.swift in Sources */,
 				8FEB05A31C3F41B60041F37C /* Request.swift in Sources */,
