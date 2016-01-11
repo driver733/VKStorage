@@ -23,9 +23,9 @@ class FilesVC: UIViewController {
   override func viewDidLoad() {
     super.viewDidLoad()
     
-    let a = UploadDocument()
-    a.url = NSBundle.mainBundle().URLForResource("1", withExtension: "jpg")
-    a.uploadDoc()
+//    let a = UploadDocument()
+//    a.url = NSBundle.mainBundle().URLForResource("1", withExtension: "jpg")
+//    a.uploadDoc()
     
     view = tableView
     tableView.dataSource = self
