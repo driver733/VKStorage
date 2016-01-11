@@ -54,14 +54,16 @@ class CurrentUser: User {
   
   
   func loadFriends() -> BFTask {
-    return loadFriendsIDs().continueWithSuccessBlock { (task: BFTask) -> AnyObject? in
+    return loadFriendsIDs()
+        .continueWithSuccessBlock { (task: BFTask) -> AnyObject? in
       let friendsIDs = task.result as! [String]
       return self.loadFriendsProfiles(friendsIDs)
-      }.continueWithBlock { (task: BFTask) -> AnyObject? in
-        if task.error == nil {
-          self.friends = task.result as! VKUsersArray
-        }
-        return nil
+      }
+    .continueWithBlock { (task: BFTask) -> AnyObject? in
+    if task.error == nil {
+      self.friends = task.result as! VKUsersArray
+    }
+    return nil
     }
   }
   

@@ -51,6 +51,9 @@
 		8FEB05D21C40997B0041F37C /* AddCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8FEB05D01C40997B0041F37C /* AddCell.swift */; };
 		8FEB05D31C40997B0041F37C /* AddCell.xib in Resources */ = {isa = PBXBuildFile; fileRef = 8FEB05D11C40997B0041F37C /* AddCell.xib */; };
 		94C4AE5029EBE7AB6E1135B8 /* libPods-VKStorage.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 3A941FE013B6AEF7AE37929B /* libPods-VKStorage.a */; };
+		961027131C42227B007B4588 /* 1.jpg in Resources */ = {isa = PBXBuildFile; fileRef = 961027121C42227B007B4588 /* 1.jpg */; };
+		96D60ED11C4347A50075D8D9 /* 2.jpg in Resources */ = {isa = PBXBuildFile; fileRef = 96D60ED01C4347A50075D8D9 /* 2.jpg */; };
+		96E974AB1C440F60005FCE2E /* File.swift in Sources */ = {isa = PBXBuildFile; fileRef = 96E974AA1C440F60005FCE2E /* File.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -125,6 +128,9 @@
 		8FEB05AB1C3F647E0041F37C /* UploadDocument.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = UploadDocument.swift; path = ../UploadDocument.swift; sourceTree = "<group>"; };
 		8FEB05D01C40997B0041F37C /* AddCell.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = AddCell.swift; sourceTree = "<group>"; };
 		8FEB05D11C40997B0041F37C /* AddCell.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = AddCell.xib; sourceTree = "<group>"; };
+		961027121C42227B007B4588 /* 1.jpg */ = {isa = PBXFileReference; lastKnownFileType = image.jpeg; path = 1.jpg; sourceTree = "<group>"; };
+		96D60ED01C4347A50075D8D9 /* 2.jpg */ = {isa = PBXFileReference; lastKnownFileType = image.jpeg; path = 2.jpg; sourceTree = "<group>"; };
+		96E974AA1C440F60005FCE2E /* File.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = File.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -216,6 +222,8 @@
 				8FEB05881C3F0DD70041F37C /* Model */,
 				8F4606831C3C0D6D007945D1 /* Login */,
 				8F4785891C38A75B00883E48 /* FilesVC.swift */,
+				96D60ED01C4347A50075D8D9 /* 2.jpg */,
+				961027121C42227B007B4588 /* 1.jpg */,
 				8FD3B7D61C3D6277002120EA /* MainTabBarVC.swift */,
 				8FD3B7CD1C3D5A4E002120EA /* LoadingIndicatorView.swift */,
 			);
@@ -303,6 +311,7 @@
 				8FEB05851C3EF1FB0041F37C /* DocumentArray.swift */,
 				8F1D64541C3DA05D00F2096F /* Document.swift */,
 				8FEB05AB1C3F647E0041F37C /* UploadDocument.swift */,
+				96E974AA1C440F60005FCE2E /* File.swift */,
 			);
 			name = Document;
 			sourceTree = "<group>";
@@ -446,7 +455,9 @@
 				8FEB059E1C3F41B60041F37C /* Info-tvOS.plist in Resources */,
 				8F26620E1C3EDC7A009F00C6 /* DocumentCell.xib in Resources */,
 				8FEB059F1C3F41B60041F37C /* Info.plist in Resources */,
+				96D60ED11C4347A50075D8D9 /* 2.jpg in Resources */,
 				8F4785941C38A75B00883E48 /* LaunchScreen.storyboard in Resources */,
+				961027131C42227B007B4588 /* 1.jpg in Resources */,
 				8F4785911C38A75B00883E48 /* Assets.xcassets in Resources */,
 				8F4606821C3C0D63007945D1 /* LoginVC.xib in Resources */,
 				8FEB05D31C40997B0041F37C /* AddCell.xib in Resources */,
@@ -551,6 +562,7 @@
 				8FEB05A11C3F41B60041F37C /* MultipartFormData.swift in Sources */,
 				8F1BD6691C3C275300190E79 /* CurrentUser.swift in Sources */,
 				8F1BD6671C3C274600190E79 /* User.swift in Sources */,
+				96E974AB1C440F60005FCE2E /* File.swift in Sources */,
 				8F7552BC1C3C541B004132E8 /* SwiftyUserDefaults.swift in Sources */,
 				8FEB05861C3EF1FB0041F37C /* DocumentArray.swift in Sources */,
 				8FD3B7D41C3D60DA002120EA /* NSNotificationCenterBlocksAPI.swift in Sources */,
