@@ -21,6 +21,8 @@ class UploadDocument {
   var progress: Int64?
   /// <#Description#>
   var url: NSURL!
+  ///
+  var progressDelegate: ProgressDelegate?
   
   func uploadDoc() -> BFTask {
       
@@ -89,7 +91,8 @@ class UploadDocument {
         switch encodingResult {
         case .Success(let upload, _, _):
           upload.progress { _, totalBytesWritten, totalBytesExpectedToWrite in
-            //implement progress here
+            let completionPercentage = Float(Double(totalBytesWritten) / Double(totalBytesExpectedToWrite))
+            self.progressDelegate?.progressDidChange(completionPercentage)
           }
           upload.responseJSON { response in
             let json = JSON(response.result.value!)
