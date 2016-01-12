@@ -9,6 +9,11 @@
 			<key>orderHint</key>
 			<integer>0</integer>
 		</dict>
+		<key>VKStorageShare.xcscheme</key>
+		<dict>
+			<key>orderHint</key>
+			<integer>8</integer>
+		</dict>
 	</dict>
 	<key>SuppressBuildableAutocreation</key>
 	<dict>
@@ -23,6 +28,11 @@
 			<true/>
 		</dict>
 		<key>8F4785A41C38A75B00883E48</key>
+		<dict>
+			<key>primary</key>
+			<true/>
+		</dict>
+		<key>8F99D6211C4237450006DB03</key>
 		<dict>
 			<key>primary</key>
 			<true/>

@@ -17,9 +17,9 @@ class FilesVC: UIViewController {
   
   let tableView = UITableView()
   let addTableView = UITableView()
-
+  let tintView = UIView()
   var refreshControl = UIRefreshControl()
-
+  
   override func viewDidLoad() {
     super.viewDidLoad()
     
@@ -36,14 +36,13 @@ class FilesVC: UIViewController {
     tableView.registerNib(UINib(nibName: "DocumentCell", bundle: nil), forCellReuseIdentifier: "DocumentCell")
     tableView.addSubview(refreshControl)
     
-    addTableView.backgroundColor = UIColor.blackColor()
-  
+    addTableView.hidden = true
+    addTableView.scrollEnabled = false
     addTableView.dataSource = self
     addTableView.rowHeight = UITableViewAutomaticDimension
     addTableView.estimatedRowHeight = 44.0
     addTableView.tableFooterView = UIView(frame: CGRectZero)
     addTableView.registerNib(UINib(nibName: "AddCell", bundle: nil), forCellReuseIdentifier: "AddCell")
-    view.addSubview(addTableView)
     
     refreshControl.addTarget(self, action: "refresh:", forControlEvents: UIControlEvents.ValueChanged)
     
@@ -61,14 +60,29 @@ class FilesVC: UIViewController {
   }
   
   override func viewDidAppear(animated: Bool) {
+    tintView.frame = UIScreen.mainScreen().bounds
+    tintView.alpha = 0
+    tintView.backgroundColor = UIColor.blackColor()
+    view.addSubview(tintView)
+    
     NSNotificationCenter.defaultCenter().postNotificationName(MAIN_TAB_BAR_VC_VIEW_DID_APPEAR, object: nil)
-    addTableView.frame = CGRectMake(0, 0, view.bounds.size.width, 176)
+    addTableView.frame = CGRectMake(0, -176, view.bounds.size.width, 176)
+    view.addSubview(addTableView)
+  }
+  
+  func skip(indexPath: NSIndexPath) -> Int {
+    var skip = 0
+    for var section=0; section<indexPath.section; section++ {
+      skip += tableView.numberOfRowsInSection(section)
+    }
+    return skip
   }
   
   func refresh(sender: AnyObject?) {
     CurrentUser.sharedCurrentUser().loadDocuments().continueWithSuccessBlock { (task: BFTask) -> AnyObject? in
-       dispatch_async(dispatch_get_main_queue(), { () -> Void in
-        self.title = "\(CurrentUser.sharedCurrentUser().documents.documents.count) Документов"
+      dispatch_async(dispatch_get_main_queue(), { () -> Void in
+        CurrentUser.sharedCurrentUser().documentArray.sortBySize(.OrderedAscending)
+        self.title = "\(CurrentUser.sharedCurrentUser().documentArray.documents.count) Документов"
         self.refreshControl.endRefreshing()
         self.tableView.reloadData()
       })
@@ -77,8 +91,24 @@ class FilesVC: UIViewController {
   }
   
   func didTapAddButton(sender: UIBarButtonItem) {
-  
-
+    if addTableView.hidden {
+      addTableView.hidden = false
+      UIView.animateWithDuration(0.26) { () -> Void in
+        let addTableViewBounds = self.addTableView.bounds
+        self.addTableView.frame = CGRectMake(0, 0, addTableViewBounds.width, addTableViewBounds.height)
+        self.tintView.alpha = 0.5
+      }
+    } else {
+      UIView.animateWithDuration(0.26, animations: { () -> Void in
+        let addTableViewBounds = self.addTableView.bounds
+        self.addTableView.frame = CGRectMake(0, -addTableViewBounds.height, addTableViewBounds.width, addTableViewBounds.height)
+        self.tintView.alpha = 0
+        }, completion: { (result: Bool) -> Void in
+          if result {
+            self.addTableView.hidden = true
+          }
+      })
+    }
   }
   
 }
@@ -88,7 +118,10 @@ extension FilesVC : UITableViewDataSource {
   func tableView(tableView: UITableView, cellForRowAtIndexPath indexPath: NSIndexPath) -> UITableViewCell {
     if tableView == self.tableView {
       let cell = tableView.dequeueReusableCellWithIdentifier("DocumentCell", forIndexPath: indexPath) as! DocumentCell
-      let doc = CurrentUser.sharedCurrentUser().documents.documents[indexPath.row]
+      
+      
+      
+      let doc = CurrentUser.sharedCurrentUser().documentArray.documents[indexPath.row+skip(indexPath)]
       doc.progressDelegate = cell
       if doc.isLoading {
         cell.progressView.hidden = false
@@ -121,8 +154,8 @@ extension FilesVC : UITableViewDataSource {
   
   func tableView(tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
     if tableView == self.tableView {
-      if let docs = CurrentUser.sharedCurrentUser().documents {
-        return docs.documents.count
+      if let docs = CurrentUser.sharedCurrentUser().documentArray {
+        return docs.sortInfo.numberOfRowsInSections[section]
       } else {
         return 0
       }
@@ -131,17 +164,31 @@ extension FilesVC : UITableViewDataSource {
     }
   }
   
+  func tableView(tableView: UITableView, titleForHeaderInSection section: Int) -> String? {
+    if let docs = CurrentUser.sharedCurrentUser().documentArray {
+      return docs.sortInfo.titleForHeaderInSection[section]
+    }
+    return ""
+  }
+  
+  func numberOfSectionsInTableView(tableView: UITableView) -> Int {
+    if let docs = CurrentUser.sharedCurrentUser().documentArray {
+      return docs.sortInfo.numberOfSections
+    }
+    return 0
+  }
+  
+  
 }
-
 
 extension FilesVC : UITableViewDelegate {
   
   func tableView(tableView: UITableView, didEndDisplayingCell cell: UITableViewCell, forRowAtIndexPath indexPath: NSIndexPath) {
-    CurrentUser.sharedCurrentUser().documents.documents[indexPath.row].progressDelegate = nil
+    CurrentUser.sharedCurrentUser().documentArray.documents[indexPath.row+skip(indexPath)].progressDelegate = nil
   }
   
   func tableView(tableView: UITableView, didSelectRowAtIndexPath indexPath: NSIndexPath) {
-    let doc = CurrentUser.sharedCurrentUser().documents.documents[indexPath.row]
+    let doc = CurrentUser.sharedCurrentUser().documentArray.documents[indexPath.row+skip(indexPath)]
     if doc.isCached {
       let previewQL = QLPreviewController()
       previewQL.dataSource = self
@@ -159,7 +206,6 @@ extension FilesVC : UITableViewDelegate {
 
 }
 
-
 extension FilesVC : QLPreviewControllerDataSource {
   
   func numberOfPreviewItemsInPreviewController(controller: QLPreviewController) -> Int {
@@ -167,7 +213,8 @@ extension FilesVC : QLPreviewControllerDataSource {
   }
   
   func previewController(controller: QLPreviewController, previewItemAtIndex index: Int) -> QLPreviewItem {
-    let doc = CurrentUser.sharedCurrentUser().documents.documents[(tableView.indexPathForSelectedRow?.row)!]
+    let realIndex = (tableView.indexPathForSelectedRow?.row)!+skip(tableView.indexPathForSelectedRow!)
+    let doc = CurrentUser.sharedCurrentUser().documentArray.documents[realIndex]
     let title = Defaults[doc.vkDoc.title].string
     let fileURL = NSURL.fileURLWithPath(FCFileManager.pathForDocumentsDirectoryWithPath(title))
     return fileURL

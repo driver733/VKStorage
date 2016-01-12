@@ -8,6 +8,11 @@
 
 import Foundation
 
+extension String {
+  subscript (i: Int) -> Character {
+    return self[self.startIndex.advancedBy(i)]
+  }
+}
 
 extension UIView {
   class func loadFromNibNamed(nibNamed: String, bundle : NSBundle? = nil) -> UIView? {

@@ -8,7 +8,6 @@
 
 import Foundation
 
-
 class Document {
   
   /// vkDoc instance associated with the Document

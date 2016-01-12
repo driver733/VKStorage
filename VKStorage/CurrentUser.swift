@@ -18,7 +18,7 @@ class CurrentUser: User {
   
   var loginLoadingStateDelegate: LoadingStateDelegate?
   var friends: VKUsersArray!
-  var documents: DocumentArray!
+  var documentArray: DocumentArray!
   
   override init() {}
   
@@ -52,20 +52,20 @@ class CurrentUser: User {
     VKSdk.authorize(VKSDK_AUTH_PERMISSIONS)
   }
   
-  
   func loadFriends() -> BFTask {
     return loadFriendsIDs()
-        .continueWithSuccessBlock { (task: BFTask) -> AnyObject? in
+
+    .continueWithSuccessBlock { (task: BFTask) -> AnyObject? in
       let friendsIDs = task.result as! [String]
       return self.loadFriendsProfiles(friendsIDs)
-      }
+    }
     .continueWithBlock { (task: BFTask) -> AnyObject? in
-    if task.error == nil {
-      self.friends = task.result as! VKUsersArray
+      if task.error == nil {
+        self.friends = task.result as! VKUsersArray
+      }
+      return nil
     }
-    return nil
-    }
-  }
+}
   
   func loadFriendsIDs() -> BFTask {
     let task = BFTaskCompletionSource()
@@ -109,7 +109,7 @@ class CurrentUser: User {
     let task = BFTaskCompletionSource()
     VKApiDocs().get().executeWithResultBlock({ (response: VKResponse!) -> Void in
       let res = response.parsedModel as! VKDocsArray
-      self.documents = DocumentArray(vkDocsArray: res)
+      self.documentArray = DocumentArray(vkDocsArray: res)
       task.setResult(nil)
       }) { (error: NSError!) -> Void in
     }
