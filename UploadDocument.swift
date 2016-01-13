@@ -18,18 +18,13 @@ class UploadDocument {
   /// <#Description#>
   var tags: String?
 
-
-
   /// <#Description#>
   var progress: Int64?
   /// <#Description#>
   var url: NSURL!
 
-
-
   ///
   var progressDelegate: ProgressDelegate?
-
   
   func uploadDoc() -> BFTask {
       

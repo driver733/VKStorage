@@ -15,10 +15,16 @@ enum SortType {
 }
 
 class SortInfo {
+    
+  private(set) var numberOfSections = 0
+  private(set) var sortType = SortType.Name
+  private(set) var numberOfRowsInSections = [0]
+  private(set) var titleForHeaderInSection = [""]
   
-  var numberOfSections = 0
-  var sortType = SortType.Name
-  var numberOfRowsInSections = [0]
-  var titleForHeaderInSection = [""]
-  
+  init(numberOfSections: Int, sortType: SortType, numberOfRowsInSections: [Int], titleForHeaderInSection: [String]) {
+    self.numberOfSections = numberOfSections
+    self.sortType = sortType
+    self.numberOfRowsInSections = numberOfRowsInSections
+    self.titleForHeaderInSection = titleForHeaderInSection
+  }
 }

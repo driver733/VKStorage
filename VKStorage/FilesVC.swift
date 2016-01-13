@@ -22,7 +22,7 @@ class FilesVC: UIViewController {
   
   override func viewDidLoad() {
     super.viewDidLoad()
-    
+
 //    let a = UploadDocument()
 //    a.url = NSBundle.mainBundle().URLForResource("1", withExtension: "jpg")
 //    a.uploadDoc()
@@ -81,7 +81,7 @@ class FilesVC: UIViewController {
   func refresh(sender: AnyObject?) {
     CurrentUser.sharedCurrentUser().loadDocuments().continueWithSuccessBlock { (task: BFTask) -> AnyObject? in
       dispatch_async(dispatch_get_main_queue(), { () -> Void in
-        CurrentUser.sharedCurrentUser().documentArray.sortBySize(.OrderedAscending)
+        CurrentUser.sharedCurrentUser().documentArray.sortByUploadDate(.OrderedDescending)
         self.title = "\(CurrentUser.sharedCurrentUser().documentArray.documents.count) Документов"
         self.refreshControl.endRefreshing()
         self.tableView.reloadData()
@@ -118,9 +118,6 @@ extension FilesVC : UITableViewDataSource {
   func tableView(tableView: UITableView, cellForRowAtIndexPath indexPath: NSIndexPath) -> UITableViewCell {
     if tableView == self.tableView {
       let cell = tableView.dequeueReusableCellWithIdentifier("DocumentCell", forIndexPath: indexPath) as! DocumentCell
-      
-      
-      
       let doc = CurrentUser.sharedCurrentUser().documentArray.documents[indexPath.row+skip(indexPath)]
       doc.progressDelegate = cell
       if doc.isLoading {
@@ -172,13 +169,15 @@ extension FilesVC : UITableViewDataSource {
   }
   
   func numberOfSectionsInTableView(tableView: UITableView) -> Int {
-    if let docs = CurrentUser.sharedCurrentUser().documentArray {
-      return docs.sortInfo.numberOfSections
+    if tableView == self.tableView {
+      if let docs = CurrentUser.sharedCurrentUser().documentArray {
+        return docs.sortInfo.numberOfSections
+      }
     }
-    return 0
+    return 1
   }
-  
-  
+
+
 }
 
 extension FilesVC : UITableViewDelegate {
