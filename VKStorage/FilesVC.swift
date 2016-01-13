@@ -23,9 +23,25 @@ class FilesVC: UIViewController {
   override func viewDidLoad() {
     super.viewDidLoad()
 
+
 //    let a = UploadDocument()
 //    a.url = NSBundle.mainBundle().URLForResource("1", withExtension: "jpg")
 //    a.uploadDoc()
+
+    
+    let FS = AbstractFS()
+    FS.FS!.append(AbstractDirectory(name: "root", delegate: FS))
+//    let rootDir = AbstractDirectory(name: "root")
+//    rootDir.path = "/"
+
+    
+//    print(FS.FS![0])
+//    FS.FS![0].mkdir("Foo").mkdir("Bar")
+//    
+//    for dir in FS.FS! {
+//      print(dir.path)
+//    }
+
     
     view = tableView
     tableView.dataSource = self
