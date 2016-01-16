@@ -90,6 +90,7 @@
 		8F2625971C3EB5C9009B9215 /* SwiftyJSON.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SwiftyJSON.swift; sourceTree = "<group>"; };
 		8F26620B1C3EDC7A009F00C6 /* DocumentCell.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = DocumentCell.swift; sourceTree = "<group>"; };
 		8F26620C1C3EDC7A009F00C6 /* DocumentCell.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = DocumentCell.xib; sourceTree = "<group>"; };
+		8F429DF61C49CC9100062EEB /* VKStorage.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.xml; path = VKStorage.entitlements; sourceTree = "<group>"; };
 		8F46067F1C3C0D63007945D1 /* LoginVC.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = LoginVC.swift; sourceTree = "<group>"; };
 		8F4606801C3C0D63007945D1 /* LoginVC.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = LoginVC.xib; sourceTree = "<group>"; };
 		8F4785841C38A75B00883E48 /* VKStorage.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = VKStorage.app; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -223,6 +224,7 @@
 		8F4785861C38A75B00883E48 /* VKStorage */ = {
 			isa = PBXGroup;
 			children = (
+				8F429DF61C49CC9100062EEB /* VKStorage.entitlements */,
 				8FEB05D41C409E290041F37C /* AddCell */,
 				8FEB05871C3F0D8F0041F37C /* DocumentCell */,
 				8FEB05881C3F0DD70041F37C /* Model */,
@@ -436,6 +438,9 @@
 						DevelopmentTeam = SSVGY9896H;
 						SystemCapabilities = {
 							com.apple.ApplicationGroups.iOS = {
+								enabled = 1;
+							};
+							com.apple.iCloud = {
 								enabled = 1;
 							};
 						};
@@ -727,7 +732,7 @@
 			baseConfigurationReference = 1CB2E373DD2334177DF5117A /* Pods-VKStorage.debug.xcconfig */;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
-				CODE_SIGN_ENTITLEMENTS = "";
+				CODE_SIGN_ENTITLEMENTS = VKStorage/VKStorage.entitlements;
 				CODE_SIGN_IDENTITY = "iPhone Developer";
 				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
 				INFOPLIST_FILE = VKStorage/Info.plist;
@@ -745,7 +750,7 @@
 			baseConfigurationReference = 00A53D79EDB918639EB830BC /* Pods-VKStorage.release.xcconfig */;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
-				CODE_SIGN_ENTITLEMENTS = "";
+				CODE_SIGN_ENTITLEMENTS = VKStorage/VKStorage.entitlements;
 				CODE_SIGN_IDENTITY = "iPhone Developer";
 				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
 				INFOPLIST_FILE = VKStorage/Info.plist;

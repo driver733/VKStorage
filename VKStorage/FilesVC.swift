@@ -97,7 +97,7 @@ class FilesVC: UIViewController {
   func refresh(sender: AnyObject?) {
     CurrentUser.sharedCurrentUser().loadDocuments().continueWithSuccessBlock { (task: BFTask) -> AnyObject? in
       dispatch_async(dispatch_get_main_queue(), { () -> Void in
-        CurrentUser.sharedCurrentUser().documentArray.sortByUploadDate(.OrderedDescending)
+        CurrentUser.sharedCurrentUser().documentArray.sortByUploadDate(.OrderedAscending)
         self.title = "\(CurrentUser.sharedCurrentUser().documentArray.documents.count) Документов"
         self.refreshControl.endRefreshing()
         self.tableView.reloadData()
