@@ -11,23 +11,28 @@ import Foundation
 
 class UploadDocument {
   
-  /// <#Description#>
-  var title: String!
-  /// <#Description#>
-  var data: NSData!
-  /// <#Description#>
-  var tags: String?
-
-  /// <#Description#>
-  var progress: Int64?
-  /// <#Description#>
+//  /// <#Description#>
+//  var title: String!
+//  /// <#Description#>
+//  var data: NSData!
+//  /// <#Description#>
+//  var tags: String?
+//
+//  /// <#Description#>
+//  var progress: Int64?
+//  /// <#Description#>
   var url: NSURL!
-
-  ///
+//
+//  ///
   var progressDelegate: ProgressDelegate?
+//  var doc: Document
+  
+  init(url: NSURL) {
+    self.url = url
+  }
   
   func uploadDoc() -> BFTask {
-      
+//    if doc.isCached {return BFTask(error: NSError(domain: "Chached", code: 666, userInfo: nil))}
     return getUploadServer().continueWithSuccessBlock({ (task: BFTask) -> AnyObject? in
       let vkURL = task.result as! String
       return self.uploadToDocs(vkURL, fileWithURL: self.url).continueWithSuccessBlock({ (task: BFTask) -> AnyObject? in

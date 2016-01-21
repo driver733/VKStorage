@@ -22,26 +22,6 @@ class FilesVC: UIViewController {
   
   override func viewDidLoad() {
     super.viewDidLoad()
-
-
-//    let a = UploadDocument()
-//    a.url = NSBundle.mainBundle().URLForResource("1", withExtension: "jpg")
-//    a.uploadDoc()
-
-    
-    let FS = AbstractFS()
-    FS.FS!.append(AbstractDirectory(name: "root", delegate: FS))
-//    let rootDir = AbstractDirectory(name: "root")
-//    rootDir.path = "/"
-
-    
-//    print(FS.FS![0])
-//    FS.FS![0].mkdir("Foo").mkdir("Bar")
-//    
-//    for dir in FS.FS! {
-//      print(dir.path)
-//    }
-
     
     view = tableView
     tableView.dataSource = self
@@ -68,6 +48,27 @@ class FilesVC: UIViewController {
     
     refreshControl.beginRefreshing()
     refresh(nil)
+    
+    providesPresentationContextTransitionStyle = true
+    definesPresentationContext = true
+    
+    if #available(iOS 8.0, *) {
+      let a = DocumentImporter()
+      a.launch()
+      a.modalPresentationStyle = .Custom
+      self.presentViewController(a, animated: false, completion: nil)
+    } else {
+      // Fallback on earlier versions
+    }
+//
+//    for i in Defaults.dictionaryRepresentation() {
+//      print(i)
+//    }
+//    
+//    for i in (FCFileManager.listFilesInDirectoryAtPath(FCFileManager.pathForDocumentsDirectory())) {
+//      print(i)
+//    }
+    
   }
 
   override func didReceiveMemoryWarning() {
@@ -140,7 +141,7 @@ extension FilesVC : UITableViewDataSource {
         cell.progressView.hidden = false
       }
       cell.previewImageView.sd_setImageWithURL(NSURL(string: "http://www.metrogeotechnics.org/images/doc_icon1_40.png"))
-      cell.titleLabel.text = doc.vkDoc.title
+      cell.titleLabel.text = doc.title
       cell.infoLabel.text = doc.size
       cell.separatorInset = UIEdgeInsets(top: 0, left: cell.titleLabel.frame.minX, bottom: 0, right: 7)
       return cell
@@ -230,14 +231,23 @@ extension FilesVC : QLPreviewControllerDataSource {
   func previewController(controller: QLPreviewController, previewItemAtIndex index: Int) -> QLPreviewItem {
     let realIndex = (tableView.indexPathForSelectedRow?.row)!+skip(tableView.indexPathForSelectedRow!)
     let doc = CurrentUser.sharedCurrentUser().documentArray.documents[realIndex]
-    let title = Defaults[doc.vkDoc.title].string
+    let title = Defaults[doc.title].string
     let fileURL = NSURL.fileURLWithPath(FCFileManager.pathForDocumentsDirectoryWithPath(title))
     return fileURL
   }
   
 }
 
-
+extension FilesVC : DocumentImporterDelegate {
+  
+  func documentWasPickedAtURL(url: NSURL) {
+    
+//    presentViewController(<#T##viewControllerToPresent: UIViewController##UIViewController#>, animated: <#T##Bool#>, completion: <#T##(() -> Void)?##(() -> Void)?##() -> Void#>)
+    let docToUpload = UploadDocument(url: url)
+    
+  }
+  
+}
 
 
 

@@ -24,7 +24,7 @@ class DocumentArray {
   }
   
   func sortByName(sortType: NSComparisonResult) {
-    documents.sortInPlace({$0.vkDoc.title.localizedCompare($1.vkDoc.title) == sortType})
+    documents.sortInPlace({$0.title.localizedCompare($1.title) == sortType})
     sortInfo = nameSortInfo()
   }
   
@@ -34,7 +34,7 @@ class DocumentArray {
   }
   
   func sortBySize(sortType: NSComparisonResult) {
-    documents.sortInPlace({$0.vkDoc.size.compare($1.vkDoc.size) == sortType})
+    documents.sortInPlace({$0.size.compare($1.size) == sortType})
     sortInfo = sizeSortInfo(sortType)
   }
   
@@ -47,7 +47,7 @@ class DocumentArray {
       sizes = sizes.reverse()
     }
       for doc in documents {
-        let sizeInMB = doc.vkDoc.size.doubleValue/1024/1024
+        let sizeInMB = Double(doc.size)!/1024/1024
         switch sizeInMB {
         case _ where sizeInMB < 1:
           numberOfDocsForEachSize[indexes[0]]++
@@ -72,16 +72,16 @@ class DocumentArray {
   private func nameSortInfo() -> SortInfo {
     var numberOfUniquePrefixChars = 0
     var numberOfPrefixCharsForEachPrefix = [0]
-    var tempPrefixChar = documents[0].vkDoc.title[0]
+    var tempPrefixChar = documents[0].title[0]
     var index = 0
     var prefixChars: [String] = [String(tempPrefixChar)]
     for doc in documents {
-      if String(doc.vkDoc.title[0]).lowercaseString != String(tempPrefixChar).lowercaseString {
-        prefixChars.append(String(doc.vkDoc.title[0]))
+      if String(doc.title[0]).lowercaseString != String(tempPrefixChar).lowercaseString {
+        prefixChars.append(String(doc.title[0]))
         numberOfPrefixCharsForEachPrefix.append(1)
         index++
         numberOfUniquePrefixChars++
-        tempPrefixChar = doc.vkDoc.title[0]
+        tempPrefixChar = doc.title[0]
       } else {
         numberOfPrefixCharsForEachPrefix[index]++
       }

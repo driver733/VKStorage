@@ -8,40 +8,66 @@
 
 import Foundation
 
+//enum Origin {
+//  
+//  case Remote
+//  case Synced
+//  
+//}
+
 class Document {
   
   /// vkDoc instance associated with the Document
-  var vkDoc: VKDocs!
+//  var vkDoc: VKDocs!
   /// Date when the document was modified
   var date: NSDate!
   /// Formatted size of the document
   var size: String!
-  /// <#Description#>
-  var isLoading = false
-  var isCached: Bool {
-    if let title = Defaults[vkDoc.title].string {
-      return FCFileManager.existsItemAtPath(FCFileManager.pathForDocumentsDirectoryWithPath(title))
-    } else {
-      return false
-    }
-  }
- 
+  
+//  var origin: Origin
+  ///
+  var id: Int?
+  var owner_id: Int?
+  var title: String!
+  var ext: String?
+  var url: NSURL!
+  var photo_100: String?
+  var photo_130: String?
+  
   var progressDelegate: ProgressDelegate?
   
+  var isLoading = false
+  
+  var isCached: Bool {
+    return FCFileManager.existsItemAtPath(title)
+  }
+  
   init(vkDoc: VKDocs) {
-    self.vkDoc = vkDoc
+
+    self.title = vkDoc.title
+    self.owner_id = vkDoc.owner_id.integerValue
+    self.ext = vkDoc.ext
+    self.url = NSURL(string: vkDoc.url)
+    self.photo_100 = vkDoc.photo_100
+    self.photo_130 = vkDoc.photo_130
     self.date = NSDate(timeIntervalSince1970: NSTimeInterval(vkDoc.date))
+    
     let byteCountFormatter = NSByteCountFormatter()
     byteCountFormatter.countStyle = .File
     self.size = byteCountFormatter.stringFromByteCount(vkDoc.size.longLongValue)
+//    self.origin = .Synced
+    
   }
   
+  //Тут полный треш с title и suggestedFilename 
+  //suggestedFilename перербатывает имя объекта или вк возвращает имя отличное от тайтла
   func downloadVK() -> BFTask {
     let task = BFTaskCompletionSource()
+    
     var fileName = ""
-    download(Method.GET, NSURL(string: vkDoc.url)!, destination: { (_, response: NSHTTPURLResponse) -> NSURL in
+    download(Method.GET, self.url!, destination: { (_, response: NSHTTPURLResponse) -> NSURL in
       fileName = response.suggestedFilename!
-      let path = NSURL.fileURLWithPath(FCFileManager.pathForDocumentsDirectoryWithPath(response.suggestedFilename))
+      let path = NSURL.fileURLWithPath(FCFileManager.pathForDocumentsDirectoryWithPath(self.title))
       return path
     })
     .progress { (bytesRead: Int64, totalBytesRead: Int64, totalBytesExpectedToRead: Int64) -> Void in
@@ -53,19 +79,14 @@ class Document {
     }
     .responseJSON { (response: Response<AnyObject, NSError>) -> Void in
       if !fileName.isEmpty {
-        Defaults[self.vkDoc.title] = fileName
+        Defaults[self.title] = self.title
+        print(self.url)
         self.isLoading = false
       }
     }
     
     return task.task
   }
-  
-  
-  
-  
-  
-  
   
   
   
