@@ -8,54 +8,44 @@
 
 import Foundation
 
-//enum Origin {
-//  
-//  case Remote
-//  case Synced
-//  
-//}
-
-class Document {
+class Document: RLMObject {
   
   /// vkDoc instance associated with the Document
 //  var vkDoc: VKDocs!
   /// Date when the document was modified
-  var date: NSDate!
+  var date: NSDate = NSDate()
   /// Formatted size of the document
-  var size: String!
+  var size: String = ""
   
-//  var origin: Origin
-  ///
-  var id: Int?
-  var owner_id: Int?
-  var title: String!
-  var ext: String?
-  var url: NSURL!
-  var photo_100: String?
-  var photo_130: String?
+  dynamic var id: Int = 0
+  dynamic var owner_id: Int = 0
+  dynamic var title: String = ""
+  dynamic var ext: String = ""
+  dynamic var url: String = ""
+//  var photo_100: String = ""
+//  var photo_130: String = ""
   
   var progressDelegate: ProgressDelegate?
   
-  var isLoading = false
+  dynamic var isLoading = false
   
   var isCached: Bool {
     return FCFileManager.existsItemAtPath(title)
   }
   
-  init(vkDoc: VKDocs) {
-
+  convenience init(vkDoc: VKDocs) {
+    self.init()
     self.title = vkDoc.title
     self.owner_id = vkDoc.owner_id.integerValue
     self.ext = vkDoc.ext
-    self.url = NSURL(string: vkDoc.url)
-    self.photo_100 = vkDoc.photo_100
-    self.photo_130 = vkDoc.photo_130
+    self.url = vkDoc.url
+//    self.photo_100 = vkDoc.photo_100
+//    self.photo_130 = vkDoc.photo_130
     self.date = NSDate(timeIntervalSince1970: NSTimeInterval(vkDoc.date))
     
     let byteCountFormatter = NSByteCountFormatter()
     byteCountFormatter.countStyle = .File
     self.size = byteCountFormatter.stringFromByteCount(vkDoc.size.longLongValue)
-//    self.origin = .Synced
     
   }
   
@@ -65,7 +55,7 @@ class Document {
     let task = BFTaskCompletionSource()
     
     var fileName = ""
-    download(Method.GET, self.url!, destination: { (_, response: NSHTTPURLResponse) -> NSURL in
+    download(Method.GET, self.url, destination: { (_, response: NSHTTPURLResponse) -> NSURL in
       fileName = response.suggestedFilename!
       let path = NSURL.fileURLWithPath(FCFileManager.pathForDocumentsDirectoryWithPath(self.title))
       return path
@@ -88,10 +78,7 @@ class Document {
     return task.task
   }
   
-  
-  
 }
-
 
 
 

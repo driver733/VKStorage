@@ -8,40 +8,44 @@
 
 import Foundation
 
-class AbstractDirectory {
+class AbstractDirectory : RLMObject {
   
-  var childrenDirectories: [AbstractDirectory]?
-  var files: [AbstractFile]?
-  var path: String!
-  var name: String!
+  dynamic var childrenDirectories: RLMArray = RLMArray(objectClassName: AbstractDirectory.className())
+  dynamic var files: RLMArray = RLMArray(objectClassName: Document.className())
+  dynamic var path = ""
+  dynamic var name = ""
   
-  var parentDirectory: AbstractDirectory?
+  dynamic var parentDirectory: AbstractDirectory?
   
-  var delegate: AbstractDirectoryDelegate?
+//  var delegate: AbstractDirectoryDelegate
   
-  init(name: String, delegate: AbstractFS) {
+  let defaultRealm = RLMRealm.defaultRealm()
+  
+  
+  convenience init(name: String, parent: AbstractDirectory?) {
+    
+    self.init()
+    self.parentDirectory = parent
     self.name = name
-    self.delegate = delegate
-    delegate.directoryWasCreated(self)
+//    self.delegate = delegate
+//    self.delegate.directoryWasCreated(self)
   }
   
-  func mkdir(name: String, delegate: AbstractFS) -> AbstractDirectory {
-    let newDir = AbstractDirectory(name: name, delegate: delegate)
-    newDir.parentDirectory = self
+  func mkdir(name: String) -> AbstractDirectory {
+    let newDir = AbstractDirectory(name: name, parent: self)
     newDir.path = newDir.parentDirectory!.path+"/"+name
-    childrenDirectories?.append(newDir)
+    childrenDirectories.addObject(newDir)
     return newDir
   }
   
-  func addfile(file: AbstractFile) {
-    files?.append(file)
+  func addfile(file: Document) {
+    files.addObject(file)
   }
   
 }
 
 protocol AbstractDirectoryDelegate {
-  
-//  var dir: AbstractDirectory { get set }
+
   func directoryWasCreated(dir: AbstractDirectory)
   
 }

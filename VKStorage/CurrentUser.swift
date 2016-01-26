@@ -19,8 +19,12 @@ class CurrentUser: User {
   var loginLoadingStateDelegate: LoadingStateDelegate?
   var friends: VKUsersArray!
   var documentArray: DocumentArray!
+//  var FS: AbstractFS?
   
-  override init() {}
+  override init() {
+    
+    
+  }
   
   private static var sharedInstance: CurrentUser!
   

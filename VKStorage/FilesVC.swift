@@ -52,21 +52,14 @@ class FilesVC: UIViewController {
     providesPresentationContextTransitionStyle = true
     definesPresentationContext = true
     
-    if #available(iOS 8.0, *) {
-      let a = DocumentImporter()
-      a.launch()
-      a.modalPresentationStyle = .Custom
-      self.presentViewController(a, animated: false, completion: nil)
-    } else {
-      // Fallback on earlier versions
-    }
-//
-//    for i in Defaults.dictionaryRepresentation() {
-//      print(i)
-//    }
-//    
-//    for i in (FCFileManager.listFilesInDirectoryAtPath(FCFileManager.pathForDocumentsDirectory())) {
-//      print(i)
+    
+//    if #available(iOS 8.0, *) {
+//      let a = DocumentImporter()
+//      a.launch()
+//      a.modalPresentationStyle = .Custom
+//      self.presentViewController(a, animated: false, completion: nil)
+//    } else {
+//      // Fallback on earlier versions
 //    }
     
   }
@@ -102,6 +95,25 @@ class FilesVC: UIViewController {
         self.title = "\(CurrentUser.sharedCurrentUser().documentArray.documents.count) Документов"
         self.refreshControl.endRefreshing()
         self.tableView.reloadData()
+        
+        let realm = RLMRealm.defaultRealm()
+        print(realm.isEmpty)
+        print(realm.path)
+
+        let a = AbstractDirectory(name: "1", parent: nil)
+        let b = AbstractDirectory(name: "2", parent: a)
+        b.mkdir("3")
+        b.mkdir("4")
+        for i in CurrentUser.sharedCurrentUser().documentArray.documents {
+          b.addfile(i as Document)
+        }
+
+        realm.beginWriteTransaction()
+        realm.addObject(a)
+        realm.addObject(b)
+        try! realm.commitWriteTransaction()
+        print(realm.isEmpty)
+
       })
       return nil
     }

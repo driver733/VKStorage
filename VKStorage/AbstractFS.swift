@@ -8,19 +8,20 @@
 
 import Foundation
 
-class AbstractFS {
+class AbstractFS  {
   
-  var FS: [AbstractDirectory]?
+  dynamic let FS = RLMArray(objectClassName: AbstractDirectory.className())
   
-  init() {
-  }
+//  convenience override init() {
+//    self.init()
+//  }
 
 }
 
 extension AbstractFS: AbstractDirectoryDelegate {
   
   func directoryWasCreated(dir: AbstractDirectory) {
-    FS?.append(dir)
+    FS.addObject(dir)
   }
   
 }
