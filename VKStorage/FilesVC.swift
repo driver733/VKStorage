@@ -15,6 +15,8 @@ protocol ProgressDelegate {
 
 class FilesVC: UIViewController {
   
+  
+  
   let tableView = UITableView()
   let addTableView = UITableView()
   let tintView = UIView()
@@ -96,23 +98,22 @@ class FilesVC: UIViewController {
         self.refreshControl.endRefreshing()
         self.tableView.reloadData()
         
-        let realm = RLMRealm.defaultRealm()
-        print(realm.isEmpty)
-        print(realm.path)
-
-        let a = AbstractDirectory(name: "1", parent: nil)
-        let b = AbstractDirectory(name: "2", parent: a)
-        b.mkdir("3")
-        b.mkdir("4")
-        for i in CurrentUser.sharedCurrentUser().documentArray.documents {
-          b.addfile(i as Document)
-        }
-
-        realm.beginWriteTransaction()
-        realm.addObject(a)
-        realm.addObject(b)
-        try! realm.commitWriteTransaction()
-        print(realm.isEmpty)
+        CurrentUser.sharedCurrentUser().rootDir.removeHash(CurrentUser.sharedCurrentUser().documentArray.documents[0])
+        
+        //
+//        let a = AbstractDirectory(name: "1", parent: nil)
+//        let b = AbstractDirectory(name: "2", parent: a)
+//        b.mkdir("3")
+//        b.mkdir("4")
+//        for i in CurrentUser.sharedCurrentUser().documentArray.documents {
+//          b.addfile(i as Document)
+//        }
+//
+//        realm.beginWriteTransaction()
+//        realm.addObject(a)
+//        realm.addObject(b)
+//        try! realm.commitWriteTransaction()
+//        print(realm.isEmpty)
 
       })
       return nil

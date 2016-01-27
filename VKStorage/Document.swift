@@ -8,33 +8,36 @@
 
 import Foundation
 
-class Document: RLMObject {
+class Document {
   
   /// vkDoc instance associated with the Document
 //  var vkDoc: VKDocs!
+  var docHash: DocumentHash {
+    return DocumentHash(doc: self)
+  }
   /// Date when the document was modified
   var date: NSDate = NSDate()
   /// Formatted size of the document
-  var size: String = ""
   
-  dynamic var id: Int = 0
-  dynamic var owner_id: Int = 0
-  dynamic var title: String = ""
-  dynamic var ext: String = ""
-  dynamic var url: String = ""
+  var id: Int = 0
+  var owner_id: Int = 0
+  
+  var size: String
+  var title: String
+  var ext: String
+  var url: String
 //  var photo_100: String = ""
 //  var photo_130: String = ""
   
   var progressDelegate: ProgressDelegate?
   
-  dynamic var isLoading = false
+  var isLoading = false
   
   var isCached: Bool {
     return FCFileManager.existsItemAtPath(title)
   }
   
-  convenience init(vkDoc: VKDocs) {
-    self.init()
+  init(vkDoc: VKDocs) {
     self.title = vkDoc.title
     self.owner_id = vkDoc.owner_id.integerValue
     self.ext = vkDoc.ext
@@ -46,6 +49,7 @@ class Document: RLMObject {
     let byteCountFormatter = NSByteCountFormatter()
     byteCountFormatter.countStyle = .File
     self.size = byteCountFormatter.stringFromByteCount(vkDoc.size.longLongValue)
+    
     
   }
   
@@ -70,7 +74,6 @@ class Document: RLMObject {
     .responseJSON { (response: Response<AnyObject, NSError>) -> Void in
       if !fileName.isEmpty {
         Defaults[self.title] = self.title
-        print(self.url)
         self.isLoading = false
       }
     }

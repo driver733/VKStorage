@@ -7,3 +7,4 @@
 #import <Realm/Realm.h>
 #import <FCFileManager/FCFileManager.h>
 #import <Reachability/Reachability.h>
+#import <CommonCrypto/CommonCrypto.h>

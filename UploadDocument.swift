@@ -58,8 +58,6 @@ class UploadDocument {
     return task.task
   }
   
-
-  
   private func saveToDocs(file: String) -> BFTask {
     let task = BFTaskCompletionSource()
     VKApiDocs().save(file).executeWithResultBlock({(

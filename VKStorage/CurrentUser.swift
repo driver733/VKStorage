@@ -19,11 +19,21 @@ class CurrentUser: User {
   var loginLoadingStateDelegate: LoadingStateDelegate?
   var friends: VKUsersArray!
   var documentArray: DocumentArray!
-//  var FS: AbstractFS?
+  var rootDir: AbstractDirectory
+  var currentDir: AbstractDirectory?
   
   override init() {
     
-    
+    let realm = RLMRealm.defaultRealm()
+    if realm.isEmpty {
+      let dir = AbstractDirectory(name: "root", parent: nil)
+      realm.beginWriteTransaction()
+      realm.addOrUpdateObject(dir)
+      try! realm.commitWriteTransaction()
+    }
+    rootDir = AbstractDirectory(forPrimaryKey: "")!
+    currentDir = rootDir
+
   }
   
   private static var sharedInstance: CurrentUser!
@@ -114,14 +124,14 @@ class CurrentUser: User {
     VKApiDocs().get().executeWithResultBlock({ (response: VKResponse!) -> Void in
       let res = response.parsedModel as! VKDocsArray
       self.documentArray = DocumentArray(vkDocsArray: res)
+      
+      self.documentArray.processDocumentHashes()
+      
       task.setResult(nil)
       }) { (error: NSError!) -> Void in
     }
       return task.task
   }
-  
-
-  
   
   
 }

@@ -54,6 +54,8 @@
 		94C4AE5029EBE7AB6E1135B8 /* libPods-VKStorage.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 3A941FE013B6AEF7AE37929B /* libPods-VKStorage.a */; };
 		961027131C42227B007B4588 /* 1.jpg in Resources */ = {isa = PBXBuildFile; fileRef = 961027121C42227B007B4588 /* 1.jpg */; };
 		96B06D1A1C49CDA400B49DB3 /* DocumentImporter.swift in Sources */ = {isa = PBXBuildFile; fileRef = 96B06D191C49CDA400B49DB3 /* DocumentImporter.swift */; };
+		96D4B92E1C57BA3C0087E20D /* String.Extention.swift in Sources */ = {isa = PBXBuildFile; fileRef = 96D4B92D1C57BA3C0087E20D /* String.Extention.swift */; };
+		96D4B9301C57BB8D0087E20D /* DocumentHash.swift in Sources */ = {isa = PBXBuildFile; fileRef = 96D4B92F1C57BB8D0087E20D /* DocumentHash.swift */; };
 		96E974B01C4540AF005FCE2E /* AbstractFS.swift in Sources */ = {isa = PBXBuildFile; fileRef = 96E974AF1C4540AF005FCE2E /* AbstractFS.swift */; };
 		96E974B31C454D73005FCE2E /* AbstractFile.swift in Sources */ = {isa = PBXBuildFile; fileRef = 96E974B21C454D73005FCE2E /* AbstractFile.swift */; };
 		96E974B51C454D85005FCE2E /* AbstractDirectory.swift in Sources */ = {isa = PBXBuildFile; fileRef = 96E974B41C454D85005FCE2E /* AbstractDirectory.swift */; };
@@ -135,6 +137,8 @@
 		8FEB05D11C40997B0041F37C /* AddCell.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = AddCell.xib; sourceTree = "<group>"; };
 		961027121C42227B007B4588 /* 1.jpg */ = {isa = PBXFileReference; lastKnownFileType = image.jpeg; path = 1.jpg; sourceTree = "<group>"; };
 		96B06D191C49CDA400B49DB3 /* DocumentImporter.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = DocumentImporter.swift; sourceTree = "<group>"; };
+		96D4B92D1C57BA3C0087E20D /* String.Extention.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = String.Extention.swift; sourceTree = "<group>"; };
+		96D4B92F1C57BB8D0087E20D /* DocumentHash.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = DocumentHash.swift; sourceTree = "<group>"; };
 		96E974AF1C4540AF005FCE2E /* AbstractFS.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = AbstractFS.swift; sourceTree = "<group>"; };
 		96E974B21C454D73005FCE2E /* AbstractFile.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = AbstractFile.swift; sourceTree = "<group>"; };
 		96E974B41C454D85005FCE2E /* AbstractDirectory.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = AbstractDirectory.swift; sourceTree = "<group>"; };
@@ -193,6 +197,7 @@
 				8F4785901C38A75B00883E48 /* Assets.xcassets */,
 				8F4785921C38A75B00883E48 /* LaunchScreen.storyboard */,
 				8F4785951C38A75B00883E48 /* Info.plist */,
+				96D4B92D1C57BA3C0087E20D /* String.Extention.swift */,
 			);
 			name = "Supporting Files";
 			path = VKStorage;
@@ -321,6 +326,7 @@
 				8F0CFBF51C433B1A00553FD8 /* DocumentSortInfo.swift */,
 				8F1D64541C3DA05D00F2096F /* Document.swift */,
 				8FEB05AB1C3F647E0041F37C /* UploadDocument.swift */,
+				96D4B92F1C57BB8D0087E20D /* DocumentHash.swift */,
 			);
 			name = Document;
 			sourceTree = "<group>";
@@ -568,11 +574,13 @@
 				8FD3B7CE1C3D5A4E002120EA /* LoadingIndicatorView.swift in Sources */,
 				8FEB05A81C3F41B60041F37C /* Stream.swift in Sources */,
 				96B06D1A1C49CDA400B49DB3 /* DocumentImporter.swift in Sources */,
+				96D4B9301C57BB8D0087E20D /* DocumentHash.swift in Sources */,
 				8FEB05A91C3F41B60041F37C /* Upload.swift in Sources */,
 				8FD3B7D01C3D5C0A002120EA /* SwiftyTimer.swift in Sources */,
 				8F2625981C3EB5C9009B9215 /* SwiftyJSON.swift in Sources */,
 				8FEB05A01C3F41B60041F37C /* Manager.swift in Sources */,
 				96E974B51C454D85005FCE2E /* AbstractDirectory.swift in Sources */,
+				96D4B92E1C57BA3C0087E20D /* String.Extention.swift in Sources */,
 				8F1D64551C3DA05D00F2096F /* Document.swift in Sources */,
 				8FD3B7D71C3D6277002120EA /* MainTabBarVC.swift in Sources */,
 				8FEB059B1C3F41B60041F37C /* Alamofire.swift in Sources */,

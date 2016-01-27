@@ -140,7 +140,23 @@ class DocumentArray {
  
 }
 
+extension DocumentArray {
+  
+  //adds new docs from vk to root directory
+  func processDocumentHashes() {
+    for i in self.documents {
 
+      if (!DocumentHash.array.contains(i.docHash.urlHash!)) {
+        CurrentUser.sharedCurrentUser().rootDir.addHash(i)
+      }
+      else {
+        print("already exists")
+      }
+      
+    }
+  }
+  
+}
 
 
 
