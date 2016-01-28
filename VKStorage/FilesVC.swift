@@ -100,12 +100,12 @@ class FilesVC: UIViewController {
         self.tableView.reloadData()
         
 //        let docs = CurrentUser.sharedCurrentUser().documentArray.documents
-//        CurrentUser.sharedCurrentUser().rootDir.removeCache(CurrentUser.sharedCurrentUser().documentArray.documents[0])
+//        CurrentUser.sharedCurrentUser().rootDir.removeDoc(CurrentUser.sharedCurrentUser().documentArray.documents[0])
 //        RLMRealm.defaultRealm().beginWriteTransaction()
 //        CurrentUser.sharedCurrentUser().rootDir.mkdir("a")
 //        CurrentUser.sharedCurrentUser().rootDir.mkdir("b")
 //        print(AbstractDirectory(forPrimaryKey: "/a")!.documents())
-//        CurrentUser.sharedCurrentUser().rootDir.moveCache(docs[0], toDir: AbstractDirectory(forPrimaryKey: "/a")!)
+//        CurrentUser.sharedCurrentUser().rootDir.moveDoc(docs[0], toDir: AbstractDirectory(forPrimaryKey: "/a")!)
 //        try! RLMRealm.defaultRealm().commitWriteTransaction()
         
         
@@ -271,9 +271,9 @@ extension FilesVC : DocumentImporterDelegate {
   
 }
 
-extension FilesVC : CachesProcessingDelegate {
+extension FilesVC : DocsProcessingDelegate {
   
-  func didFinishProcessingCaches() {
+  func didFinishProcessingDocs() {
     print("DID FINISH PROCESSING CACHES")
   }
   

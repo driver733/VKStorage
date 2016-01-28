@@ -25,10 +25,6 @@ class DocumentCache : RLMObject {
     size = doc.size
   }
   
-  override class func primaryKey() -> String {
-    return "id"
-  }
-  
 }
 
 //Class methods

@@ -12,7 +12,7 @@ class AbstractDirectory : RLMObject {
   
   dynamic var parentDirectory: AbstractDirectory?
   dynamic var childrenDirectories: RLMArray = RLMArray(objectClassName: AbstractDirectory.className())
-  dynamic var documentCaches: RLMArray = RLMArray(objectClassName: DocumentCache.className())
+  dynamic var documents: RLMArray = RLMArray(objectClassName: Document.className())
   dynamic var path = ""
   dynamic var name = ""
   
@@ -32,52 +32,62 @@ class AbstractDirectory : RLMObject {
 
   }
   
-  func mkdir(name: String) -> AbstractDirectory? {
+
+  func mkdir(name: String) -> BFTask? {
+    let task = BFTaskCompletionSource()
+    
+    if arrayOfChildrenDirectoriesNames.contains(name) {
+      task.setError(NSError(domain: "Already Exists", code: 0, userInfo: nil))
+      return task.task
+    }
+    
     let newDir = AbstractDirectory(name: name, parent: self)
     newDir.path = newDir.parentDirectory!.path+"/"+name
     let realm = RLMRealm.defaultRealm()
     realm.beginWriteTransaction()
     childrenDirectories.addObject(newDir)
     try! realm.commitWriteTransaction()
-    return newDir
+    
+    task.setResult(newDir)
+    return task.task
   }
   
-  func addCache(file: Document) {
+  func addDocument(file: Document) {
     let realm = RLMRealm.defaultRealm()
     realm.beginWriteTransaction()
-    documentCaches.addObject(file.docCache)
+    documents.addObject(file)
     try! realm.commitWriteTransaction()
   }
   
-  func removeCache(file: Document) {
-    let cache = DocumentCache(forPrimaryKey: file.docCache.id)!
+  func removeDocument(file: Document) {
+    let doc = Document(forPrimaryKey: file.id)!
 
     let realm = RLMRealm.defaultRealm()
     realm.beginWriteTransaction()
-    realm.deleteObject(cache)
+    realm.deleteObject(doc)
     try! realm.commitWriteTransaction()
     
   }
   
-  func moveCache(file: Document, toDir: AbstractDirectory) {
-    self.removeCache(file)
-    toDir.addCache(file)
+  func moveDocument(file: Document, toDir: AbstractDirectory) {
+    self.removeDocument(file)
+    toDir.addDocument(file)
   }
-  
-  func documents() -> [Document] {
-    var documents = [Document]()
-    let all_documents = CurrentUser.sharedCurrentUser().documentArray.documents
-
-    for var i=0;i<Int(documentCaches.count);i++ {
-      for j in all_documents {
-        if j.docCache.id==(documentCaches.objectAtIndex(UInt(i)) as! DocumentCache).id {
-          documents.append(j)
-        }
-      }
-    }
-    return documents
-  }
-  
+//  
+//  func documents() -> [Document] {
+//    var documents = [Document]()
+//    let all_documents = CurrentUser.sharedCurrentUser().documentArray.documents
+//
+//    for var i=0;i<Int(documents.count);i++ {
+//      for j in all_documents {
+//        if j.id==(documentCaches.objectAtIndex(UInt(i)) as! Document).id {
+//          documents.append(j)
+//        }
+//      }
+//    }
+//    return documents
+//  }
+//  
   override class func primaryKey() -> String {
     return "path"
   }

@@ -1,5 +1,5 @@
 //
-//  VKDoc.swift
+//  VKDocs.swift
 //  VKStorage
 //
 //  Created by Mike on 1/6/16.
@@ -12,14 +12,15 @@ class Document : RLMObject {
   
   /// vkDoc instance associated with the Document
 //  var vkDoc: VKDocs!
-  var docCache: DocumentCache {
-    
-    if let cache = DocumentCache(forPrimaryKey: self.id) {
-      return cache
-    }
-    return DocumentCache(doc: self)
-    
-  }
+  
+//  var docCache: Document {
+//    
+//    if let doc = Document(forPrimaryKey: self.id) {
+//      return doc
+//    }
+//    return Document(doc: self)
+//    
+//  }
   
   /// Date when the document was modified
   dynamic var date: NSDate = NSDate()
@@ -43,22 +44,22 @@ class Document : RLMObject {
     return FCFileManager.existsItemAtPath(title)
   }
   
-  init(vkDoc: VKDocs) {
-    super.init()
+  convenience init(vkDoc: VKDocs) {
+    self.init()
     self.id = Int(vkDoc.id)
     self.title = vkDoc.title
     self.owner_id = vkDoc.owner_id.integerValue
     self.ext = vkDoc.ext
     self.url = vkDoc.url
-//    self.photo_100 = vkDoc.photo_100
-//    self.photo_130 = vkDoc.photo_130
     self.date = NSDate(timeIntervalSince1970: NSTimeInterval(vkDoc.date))
     
     let byteCountFormatter = NSByteCountFormatter()
     byteCountFormatter.countStyle = .File
     self.size = byteCountFormatter.stringFromByteCount(vkDoc.size.longLongValue)
     
-    
+    //    self.photo_100 = vkDoc.photo_100
+    //    self.photo_130 = vkDoc.photo_130
+
   }
   
   //Тут полный треш с title и suggestedFilename 
@@ -87,6 +88,10 @@ class Document : RLMObject {
     }
     
     return task.task
+  }
+  
+  override class func primaryKey() -> String {
+    return "id"
   }
   
 }

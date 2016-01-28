@@ -7,7 +7,7 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
-		8F0CFBF61C433B1A00553FD8 /* DocumentSortInfo.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8F0CFBF51C433B1A00553FD8 /* DocumentSortInfo.swift */; };
+		8F0CFBF61C433B1A00553FD8 /* SortInfo.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8F0CFBF51C433B1A00553FD8 /* SortInfo.swift */; };
 		8F1BD6631C3C224000190E79 /* VKSDKHandler.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8F1BD6621C3C224000190E79 /* VKSDKHandler.swift */; };
 		8F1BD6651C3C230C00190E79 /* Extentions.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8F1BD6641C3C230C00190E79 /* Extentions.swift */; };
 		8F1BD6671C3C274600190E79 /* User.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8F1BD6661C3C274600190E79 /* User.swift */; };
@@ -81,7 +81,7 @@
 		00A53D79EDB918639EB830BC /* Pods-VKStorage.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-VKStorage.release.xcconfig"; path = "Pods/Target Support Files/Pods-VKStorage/Pods-VKStorage.release.xcconfig"; sourceTree = "<group>"; };
 		1CB2E373DD2334177DF5117A /* Pods-VKStorage.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-VKStorage.debug.xcconfig"; path = "Pods/Target Support Files/Pods-VKStorage/Pods-VKStorage.debug.xcconfig"; sourceTree = "<group>"; };
 		3A941FE013B6AEF7AE37929B /* libPods-VKStorage.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = "libPods-VKStorage.a"; sourceTree = BUILT_PRODUCTS_DIR; };
-		8F0CFBF51C433B1A00553FD8 /* DocumentSortInfo.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = DocumentSortInfo.swift; sourceTree = "<group>"; };
+		8F0CFBF51C433B1A00553FD8 /* SortInfo.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SortInfo.swift; sourceTree = "<group>"; };
 		8F19E49C1C3C191A002F8DD3 /* VKStorage-Bridging-Header.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "VKStorage-Bridging-Header.h"; sourceTree = SOURCE_ROOT; };
 		8F1BD6621C3C224000190E79 /* VKSDKHandler.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = VKSDKHandler.swift; sourceTree = "<group>"; };
 		8F1BD6641C3C230C00190E79 /* Extentions.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Extentions.swift; sourceTree = "<group>"; };
@@ -322,9 +322,9 @@
 				96D4B92F1C57BB8D0087E20D /* DocumentCache.swift */,
 				96B06D191C49CDA400B49DB3 /* DocumentImporter.swift */,
 				8FEB05851C3EF1FB0041F37C /* DocumentArray.swift */,
-				8F0CFBF51C433B1A00553FD8 /* DocumentSortInfo.swift */,
 				8F1D64541C3DA05D00F2096F /* Document.swift */,
 				8FEB05AB1C3F647E0041F37C /* UploadDocument.swift */,
+				8F0CFBF51C433B1A00553FD8 /* SortInfo.swift */,
 			);
 			name = Document;
 			sourceTree = "<group>";
@@ -586,7 +586,7 @@
 				8FEB05A51C3F41B60041F37C /* ResponseSerialization.swift in Sources */,
 				8FEB05AA1C3F41B60041F37C /* Validation.swift in Sources */,
 				8FEB059D1C3F41B60041F37C /* Error.swift in Sources */,
-				8F0CFBF61C433B1A00553FD8 /* DocumentSortInfo.swift in Sources */,
+				8F0CFBF61C433B1A00553FD8 /* SortInfo.swift in Sources */,
 				8F1BD6651C3C230C00190E79 /* Extentions.swift in Sources */,
 				8F4785881C38A75B00883E48 /* AppDelegate.swift in Sources */,
 				8FEB05AC1C3F647E0041F37C /* UploadDocument.swift in Sources */,

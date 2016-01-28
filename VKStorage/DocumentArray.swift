@@ -12,20 +12,19 @@ import Foundation
 
 class DocumentArray {
   
-  var documents: [Document]!
+  var documents = [Document]()
   private(set) var sortInfo: SortInfo!
   
-  init(vkDocsArray: VKDocsArray) {
-    documents = [Document]()
-    for vkDocument in vkDocsArray.items {
-      let doc = Document(vkDoc: vkDocument as! VKDocs)
-      documents.append(doc)
+  init() {
+    let docs = Document.objectsWithPredicate(nil)
+    for var i=0;i<Int(docs.count);i++ {
+      documents.append(docs.objectAtIndex(UInt(i)) as! Document)
     }
-    
-    //for binary search
-    documents.sortInPlace { (a: Document,b: Document) -> Bool in
-      return a.id<b.id
-    }
+//    for vkDocument in vkDocsArray.items {
+//      let doc = Document(vkDoc: vkDocument as! VKDocs)
+//      documents.append(doc)
+//    }
+
   }
   
   func sortByName(sortType: NSComparisonResult) {
@@ -98,7 +97,7 @@ class DocumentArray {
   private func uploadDateSortInfo() -> SortInfo {
     var numberOfUniquePrefixChars = 0
     var numberOfPrefixCharsForEachPrefix = [0]
-    var tempPrefixChar = dateStringFromUploadDate(documents.first!.date)
+    var tempPrefixChar = dateStringFromUploadDate(documents[0].date)
     var index = 0
     var prefixChars: [String] = [String(tempPrefixChar)]
     for doc in documents {
@@ -150,18 +149,20 @@ class DocumentArray {
 extension DocumentArray {
   
   //adds new docs from vk to root directory
-  func processDocumentsCaches() -> BFTask {
+  func processVKDocsArray(vkDocs: VKDocsArray) -> BFTask {
     let task = BFTaskCompletionSource()
-    for i in self.documents {
-      let cache = DocumentCache(forPrimaryKey: i.id)
-      if cache==nil {
-        CurrentUser.sharedCurrentUser().rootDir.addCache(i)
-      }
+    for vkDoc in vkDocs.items {
+//      print(Int(vkDoc.id))
+//      let temp = Document(forPrimaryKey: Int(vkDoc.id))
+//      print(temp==nil)
+//      print(temp)
+//      if temp==nil {
+//        CurrentUser.sharedCurrentUser().rootDir.addDocument(Document(vkDoc: vkDoc as! VKDocs))
+//      }
     }
     
     task.setResult("PROCCESSED")
-    sleep(5)
-    
+//    sleep(5)
     return task.task
 
   }
@@ -171,17 +172,19 @@ extension DocumentArray {
 
 extension DocumentArray {
   
+  //has to be sorted
   func binarySearchDocumentForID(id: Int) -> Document? {
     
+    let temp_doc = documents
     var left = 0
-    var right = documents.count - 1
+    var right = temp_doc.count - 1
     
     while (left <= right) {
       let mid = (left + right) / 2
-      let value = documents[mid].id
+      let value = temp_doc[mid].id
       
       if (value == id) {
-        return documents[mid]
+        return temp_doc[mid]
       }
       
       if (value < id) {

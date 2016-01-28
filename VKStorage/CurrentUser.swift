@@ -16,7 +16,7 @@ protocol LoadingStateDelegate {
 
 class CurrentUser: User {
   
-  var delegate: CachesProcessingDelegate?
+  var delegate: DocsProcessingDelegate?
   var loginLoadingStateDelegate: LoadingStateDelegate?
   var friends: VKUsersArray!
   var documentArray: DocumentArray!
@@ -127,14 +127,14 @@ class CurrentUser: User {
     let task = BFTaskCompletionSource()
     VKApiDocs().get().executeWithResultBlock({ (response: VKResponse!) -> Void in
       let res = response.parsedModel as! VKDocsArray
-      self.documentArray = DocumentArray(vkDocsArray: res)
-
-      self.documentArray.processDocumentsCaches().continueWithBlock({ (result: BFTask) -> AnyObject? in
-        //allow working with documents (displaying them?) after their caches have been processed
-        self.delegate?.didFinishProcessingCaches()
-        return nil
-      })
-      
+      self.documentArray = DocumentArray()
+      self.documentArray.processVKDocsArray(res)
+      print(self.documentArray.documents[0].isCached)
+//      self.documentArray.processDocumentsCaches().continueWithBlock({ (result: BFTask) -> AnyObject? in
+//        //allow working with documents (displaying them?) after their docs have been processed
+//        self.delegate?.didFinishProcessingCaches()
+//        return nil
+//      })
       task.setResult(nil)
       }) { (error: NSError!) -> Void in
     }
@@ -143,9 +143,9 @@ class CurrentUser: User {
   
 }
 
-protocol CachesProcessingDelegate {
+protocol DocsProcessingDelegate {
   
-  func didFinishProcessingCaches()
+  func didFinishProcessingDocs()
   
 }
 
