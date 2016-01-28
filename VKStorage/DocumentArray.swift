@@ -21,6 +21,11 @@ class DocumentArray {
       let doc = Document(vkDoc: vkDocument as! VKDocs)
       documents.append(doc)
     }
+    
+    //for binary search
+    documents.sortInPlace { (a: Document,b: Document) -> Bool in
+      return a.id<b.id
+    }
   }
   
   func sortByName(sortType: NSComparisonResult) {
