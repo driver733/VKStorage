@@ -319,12 +319,12 @@
 		8FEB05AD1C408B280041F37C /* Document */ = {
 			isa = PBXGroup;
 			children = (
+				96D4B92F1C57BB8D0087E20D /* DocumentCache.swift */,
 				96B06D191C49CDA400B49DB3 /* DocumentImporter.swift */,
 				8FEB05851C3EF1FB0041F37C /* DocumentArray.swift */,
 				8F0CFBF51C433B1A00553FD8 /* DocumentSortInfo.swift */,
 				8F1D64541C3DA05D00F2096F /* Document.swift */,
 				8FEB05AB1C3F647E0041F37C /* UploadDocument.swift */,
-				96D4B92F1C57BB8D0087E20D /* DocumentCache.swift */,
 			);
 			name = Document;
 			sourceTree = "<group>";

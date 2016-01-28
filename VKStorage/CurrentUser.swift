@@ -20,6 +20,7 @@ class CurrentUser: User {
   var loginLoadingStateDelegate: LoadingStateDelegate?
   var friends: VKUsersArray!
   var documentArray: DocumentArray!
+  
   var rootDir: AbstractDirectory
   var currentDir: AbstractDirectory
   

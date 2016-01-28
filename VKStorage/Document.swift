@@ -8,7 +8,7 @@
 
 import Foundation
 
-class Document {
+class Document : RLMObject {
   
   /// vkDoc instance associated with the Document
 //  var vkDoc: VKDocs!
@@ -20,17 +20,18 @@ class Document {
     return DocumentCache(doc: self)
     
   }
+  
   /// Date when the document was modified
-  var date: NSDate = NSDate()
+  dynamic var date: NSDate = NSDate()
   /// Formatted size of the document
   
-  var id: Int = 0
-  var owner_id: Int = 0
+  dynamic var id: Int = 0
+  dynamic var owner_id: Int = 0
   
-  var size: String
-  var title: String
-  var ext: String
-  var url: String
+  dynamic var size: String = ""
+  dynamic var title: String = ""
+  dynamic var ext: String = ""
+  dynamic var url: String = ""
 //  var photo_100: String = ""
 //  var photo_130: String = ""
   
@@ -38,11 +39,12 @@ class Document {
   
   var isLoading = false
   
-  var isCached: Bool {
+  dynamic var isCached: Bool {
     return FCFileManager.existsItemAtPath(title)
   }
   
   init(vkDoc: VKDocs) {
+    super.init()
     self.id = Int(vkDoc.id)
     self.title = vkDoc.title
     self.owner_id = vkDoc.owner_id.integerValue
