@@ -12,8 +12,13 @@ class Document {
   
   /// vkDoc instance associated with the Document
 //  var vkDoc: VKDocs!
-  var docHash: DocumentHash {
-    return DocumentHash(doc: self)
+  var docCache: DocumentCache {
+    
+    if let cache = DocumentCache(forPrimaryKey: self.id) {
+      return cache
+    }
+    return DocumentCache(doc: self)
+    
   }
   /// Date when the document was modified
   var date: NSDate = NSDate()
@@ -38,6 +43,7 @@ class Document {
   }
   
   init(vkDoc: VKDocs) {
+    self.id = Int(vkDoc.id)
     self.title = vkDoc.title
     self.owner_id = vkDoc.owner_id.integerValue
     self.ext = vkDoc.ext

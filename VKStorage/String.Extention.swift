@@ -17,13 +17,13 @@ extension String {
     
     CC_MD5(str!, strLen, result)
     
-    let hash = NSMutableString()
+    let cache = NSMutableString()
     for i in 0..<digestLen {
-      hash.appendFormat("%02x", result[i])
+      cache.appendFormat("%02x", result[i])
     }
     
     result.destroy()
     
-    return String(format: hash as String)
+    return String(format: cache as String)
   }
 }

@@ -140,27 +140,58 @@ class DocumentArray {
  
 }
 
+
+//DELEGATES
 extension DocumentArray {
   
   //adds new docs from vk to root directory
-  func processDocumentHashes() {
+  func processDocumentsCaches() -> BFTask {
+    let task = BFTaskCompletionSource()
     for i in self.documents {
-
-      if (!DocumentHash.array.contains(i.docHash.urlHash!)) {
-        CurrentUser.sharedCurrentUser().rootDir.addHash(i)
+      let cache = DocumentCache(forPrimaryKey: i.id)
+      if cache==nil {
+        CurrentUser.sharedCurrentUser().rootDir.addCache(i)
       }
-      else {
-        print("already exists")
-      }
-      
     }
+    
+    task.setResult("PROCCESSED")
+    sleep(5)
+    
+    return task.task
+
   }
   
 }
 
 
-
-
+extension DocumentArray {
+  
+  func binarySearchDocumentForID(id: Int) -> Document? {
+    
+    var left = 0
+    var right = documents.count - 1
+    
+    while (left <= right) {
+      let mid = (left + right) / 2
+      let value = documents[mid].id
+      
+      if (value == id) {
+        return documents[mid]
+      }
+      
+      if (value < id) {
+        left = mid + 1
+      }
+      
+      if (value > id) {
+        right = mid - 1
+      }
+    }
+    
+    return nil
+  }
+  
+}
 
 
 

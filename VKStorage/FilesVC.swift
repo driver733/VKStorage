@@ -25,6 +25,7 @@ class FilesVC: UIViewController {
   override func viewDidLoad() {
     super.viewDidLoad()
     
+    CurrentUser.sharedCurrentUser().delegate = self
     view = tableView
     tableView.dataSource = self
     tableView.delegate = self
@@ -98,7 +99,15 @@ class FilesVC: UIViewController {
         self.refreshControl.endRefreshing()
         self.tableView.reloadData()
         
-        CurrentUser.sharedCurrentUser().rootDir.removeHash(CurrentUser.sharedCurrentUser().documentArray.documents[0])
+//        let docs = CurrentUser.sharedCurrentUser().documentArray.documents
+//        CurrentUser.sharedCurrentUser().rootDir.removeCache(CurrentUser.sharedCurrentUser().documentArray.documents[0])
+//        RLMRealm.defaultRealm().beginWriteTransaction()
+//        CurrentUser.sharedCurrentUser().rootDir.mkdir("a")
+//        CurrentUser.sharedCurrentUser().rootDir.mkdir("b")
+//        print(AbstractDirectory(forPrimaryKey: "/a")!.documents())
+//        CurrentUser.sharedCurrentUser().rootDir.moveCache(docs[0], toDir: AbstractDirectory(forPrimaryKey: "/a")!)
+//        try! RLMRealm.defaultRealm().commitWriteTransaction()
+        
         
         //
 //        let a = AbstractDirectory(name: "1", parent: nil)
@@ -262,8 +271,13 @@ extension FilesVC : DocumentImporterDelegate {
   
 }
 
-
-
+extension FilesVC : CachesProcessingDelegate {
+  
+  func didFinishProcessingCaches() {
+    print("DID FINISH PROCESSING CACHES")
+  }
+  
+}
 
 
 

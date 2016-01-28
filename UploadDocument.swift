@@ -85,7 +85,7 @@ class UploadDocument {
   
   private func uploadToDocs(URL: String, fileWithURL: NSURL) -> BFTask {
     let task = BFTaskCompletionSource()
-    
+    //Implement dispatch async for progress bar?
     upload(
       .POST,
       URL,

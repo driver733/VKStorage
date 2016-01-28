@@ -16,22 +16,25 @@ protocol LoadingStateDelegate {
 
 class CurrentUser: User {
   
+  var delegate: CachesProcessingDelegate?
   var loginLoadingStateDelegate: LoadingStateDelegate?
   var friends: VKUsersArray!
   var documentArray: DocumentArray!
   var rootDir: AbstractDirectory
-  var currentDir: AbstractDirectory?
+  var currentDir: AbstractDirectory
   
   override init() {
     
     let realm = RLMRealm.defaultRealm()
     if realm.isEmpty {
-      let dir = AbstractDirectory(name: "root", parent: nil)
+      let rootDir = AbstractDirectory(name: "root", parent: nil)
+      rootDir.path = "/root"
       realm.beginWriteTransaction()
-      realm.addOrUpdateObject(dir)
+      realm.addOrUpdateObject(rootDir)
       try! realm.commitWriteTransaction()
     }
-    rootDir = AbstractDirectory(forPrimaryKey: "")!
+    
+    rootDir = AbstractDirectory(forPrimaryKey: "/root")!
     currentDir = rootDir
 
   }
@@ -124,8 +127,12 @@ class CurrentUser: User {
     VKApiDocs().get().executeWithResultBlock({ (response: VKResponse!) -> Void in
       let res = response.parsedModel as! VKDocsArray
       self.documentArray = DocumentArray(vkDocsArray: res)
-      
-      self.documentArray.processDocumentHashes()
+
+      self.documentArray.processDocumentsCaches().continueWithBlock({ (result: BFTask) -> AnyObject? in
+        //allow working with documents (displaying them?) after their caches have been processed
+        self.delegate?.didFinishProcessingCaches()
+        return nil
+      })
       
       task.setResult(nil)
       }) { (error: NSError!) -> Void in
@@ -133,9 +140,12 @@ class CurrentUser: User {
       return task.task
   }
   
-  
 }
 
-
+protocol CachesProcessingDelegate {
+  
+  func didFinishProcessingCaches()
+  
+}
 
 
