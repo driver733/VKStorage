@@ -65,16 +65,17 @@ class Document : RLMObject {
   //Тут полный треш с title и suggestedFilename 
   //suggestedFilename перербатывает имя объекта или вк возвращает имя отличное от тайтла
   func downloadVK() -> BFTask {
+    
     self.isLoading = true
     let task = BFTaskCompletionSource()
     var fileName = String()
     let path = NSURL.fileURLWithPath(FCFileManager.pathForDocumentsDirectoryWithPath(self.title))
+    
     download(Method.GET, self.url, destination: { (_, response: NSHTTPURLResponse) -> NSURL in
       fileName = response.suggestedFilename!
       return path
     })
     .progress { (bytesRead: Int64, totalBytesRead: Int64, totalBytesExpectedToRead: Int64) -> Void in
-      
       dispatch_async(dispatch_get_main_queue(), { () -> Void in
         let completionPercentage = Float(Double(totalBytesRead) / Double(totalBytesExpectedToRead))
         self.progressDelegate?.progressDidChange(completionPercentage)
