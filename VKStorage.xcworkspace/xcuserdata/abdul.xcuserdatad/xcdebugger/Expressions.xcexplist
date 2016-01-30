@@ -1,0 +1,61 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<VariablesViewState
+   version = "1.0">
+   <ContextStates>
+      <ContextState
+         contextName = "CurrentUser.login() -&gt; ():CurrentUser.swift">
+         <PersistentStrings>
+            <PersistentString
+               value = "VKSdk.vkAppMayExists()">
+            </PersistentString>
+         </PersistentStrings>
+      </ContextState>
+      <ContextState
+         contextName = "+[VKSdk authorize:withOptions:]:VKSdk.m">
+      </ContextState>
+      <ContextState
+         contextName = "+[VKSdk vkAppMayExists]:VKSdk.m">
+      </ContextState>
+      <ContextState
+         contextName = "Document.downloadVK() -&gt; BFTask:Document.swift">
+         <PersistentStrings>
+            <PersistentString
+               value = "fileName">
+            </PersistentString>
+            <PersistentString
+               value = "isLoading">
+            </PersistentString>
+         </PersistentStrings>
+      </ContextState>
+      <ContextState
+         contextName = "DocumentArray.init() -&gt; DocumentArray:DocumentArray.swift">
+         <PersistentStrings>
+            <PersistentString
+               value = "documents">
+            </PersistentString>
+            <PersistentString
+               value = "docs.objectAtIndex(0)">
+            </PersistentString>
+         </PersistentStrings>
+      </ContextState>
+      <ContextState
+         contextName = "static CurrentUser.sharedCurrentUser() -&gt; CurrentUser:CurrentUser.swift">
+         <PersistentStrings>
+            <PersistentString
+               value = "sharedInstance">
+            </PersistentString>
+         </PersistentStrings>
+      </ContextState>
+      <ContextState
+         contextName = "DocumentArray.processVKDocsArray(VKDocsArray) -&gt; BFTask:DocumentArray.swift">
+      </ContextState>
+      <ContextState
+         contextName = "FilesVC.tableView(UITableView, cellForRowAtIndexPath : NSIndexPath) -&gt; UITableViewCell:FilesVC.swift">
+         <PersistentStrings>
+            <PersistentString
+               value = "">
+            </PersistentString>
+         </PersistentStrings>
+      </ContextState>
+   </ContextStates>
+</VariablesViewState>

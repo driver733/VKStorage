@@ -36,7 +36,7 @@ class Document : RLMObject {
 //  var photo_100: String = ""
 //  var photo_130: String = ""
   
-  var progressDelegate: ProgressDelegate?
+  dynamic var progressDelegate: ProgressDelegate?
   
   var isLoading = false
   
@@ -65,16 +65,16 @@ class Document : RLMObject {
   //Тут полный треш с title и suggestedFilename 
   //suggestedFilename перербатывает имя объекта или вк возвращает имя отличное от тайтла
   func downloadVK() -> BFTask {
+    self.isLoading = true
     let task = BFTaskCompletionSource()
-    
-    var fileName = ""
+    var fileName = String()
+    let path = NSURL.fileURLWithPath(FCFileManager.pathForDocumentsDirectoryWithPath(self.title))
     download(Method.GET, self.url, destination: { (_, response: NSHTTPURLResponse) -> NSURL in
       fileName = response.suggestedFilename!
-      let path = NSURL.fileURLWithPath(FCFileManager.pathForDocumentsDirectoryWithPath(self.title))
       return path
     })
     .progress { (bytesRead: Int64, totalBytesRead: Int64, totalBytesExpectedToRead: Int64) -> Void in
-      self.isLoading = true
+      
       dispatch_async(dispatch_get_main_queue(), { () -> Void in
         let completionPercentage = Float(Double(totalBytesRead) / Double(totalBytesExpectedToRead))
         self.progressDelegate?.progressDidChange(completionPercentage)
@@ -84,14 +84,18 @@ class Document : RLMObject {
       if !fileName.isEmpty {
         Defaults[self.title] = self.title
         self.isLoading = false
+        task.setResult(nil)
       }
     }
-    
     return task.task
   }
   
   override class func primaryKey() -> String {
     return "id"
+  }
+
+  @objc override class func ignoredProperties() -> [String] {
+    return ["progressDelegate", "isLoading"]
   }
   
 }

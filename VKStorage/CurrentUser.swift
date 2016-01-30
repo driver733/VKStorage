@@ -54,7 +54,7 @@ class CurrentUser: User {
   }
   
   func login() {
-    if !VKSdk.vkAppMayExists() {
+    if VKSdk.vkAppMayExists() {
       NSNotificationCenter.defaultCenter().addObserver(self, name: VKSDK_ACCESS_AUTHORIZATION_STARTED, object: nil) { (observer, notification) -> Void in
         self.loginLoadingStateDelegate?.didStartNetworingActivity()
         NSNotificationCenter.defaultCenter().addObserver(self, name: VKSDK_ACCESS_AUTHORIZATION_SUCCEEDED, object: nil) { (observer, notification) -> Void in
@@ -128,8 +128,8 @@ class CurrentUser: User {
     VKApiDocs().get().executeWithResultBlock({ (response: VKResponse!) -> Void in
       let res = response.parsedModel as! VKDocsArray
       self.documentArray = DocumentArray()
+      
       self.documentArray.processVKDocsArray(res)
-      print(self.documentArray.documents[0].isCached)
 //      self.documentArray.processDocumentsCaches().continueWithBlock({ (result: BFTask) -> AnyObject? in
 //        //allow working with documents (displaying them?) after their docs have been processed
 //        self.delegate?.didFinishProcessingCaches()

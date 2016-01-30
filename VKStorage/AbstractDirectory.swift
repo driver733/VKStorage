@@ -69,10 +69,26 @@ class AbstractDirectory : RLMObject {
     
   }
   
-  func moveDocument(file: Document, toDir: AbstractDirectory) {
-    self.removeDocument(file)
-    toDir.addDocument(file)
+  func moveDocument(file: Document, toDir: AbstractDirectory) -> BFTask {
+    let task = BFTaskCompletionSource()
+    
+    let NOT_FOUND = UInt(UInt.max/2)
+    
+    if toDir.documents.indexOfObject(file)==NOT_FOUND {
+      toDir.addDocument(file)
+      let realm = RLMRealm.defaultRealm()
+      realm.beginWriteTransaction()
+      documents.removeObjectAtIndex(documents.indexOfObject(file))
+      try! realm.commitWriteTransaction()
+      task.setResult(true)
+    }
+    else {
+      task.setError(NSError(domain: "Aleady exists", code: 0, userInfo: nil))
+    }
+    return task.task
   }
+  
+  //написать удаление кэша удаленных объектов
 //  
 //  func documents() -> [Document] {
 //    var documents = [Document]()

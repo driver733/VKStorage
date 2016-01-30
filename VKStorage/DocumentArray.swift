@@ -8,8 +8,6 @@
 
 import Foundation
 
-
-
 class DocumentArray {
   
   var documents = [Document]()
@@ -76,7 +74,7 @@ class DocumentArray {
   private func nameSortInfo() -> SortInfo {
     var numberOfUniquePrefixChars = 0
     var numberOfPrefixCharsForEachPrefix = [0]
-    var tempPrefixChar = documents[0].title[0]
+    var tempPrefixChar = documents.first?.title[0]
     var index = 0
     var prefixChars: [String] = [String(tempPrefixChar)]
     for doc in documents {
@@ -97,7 +95,7 @@ class DocumentArray {
   private func uploadDateSortInfo() -> SortInfo {
     var numberOfUniquePrefixChars = 0
     var numberOfPrefixCharsForEachPrefix = [0]
-    var tempPrefixChar = dateStringFromUploadDate(documents[0].date)
+    var tempPrefixChar = dateStringFromUploadDate((documents.first?.date)!)
     var index = 0
     var prefixChars: [String] = [String(tempPrefixChar)]
     for doc in documents {
@@ -151,18 +149,18 @@ extension DocumentArray {
   //adds new docs from vk to root directory
   func processVKDocsArray(vkDocs: VKDocsArray) -> BFTask {
     let task = BFTaskCompletionSource()
-    for vkDoc in vkDocs.items {
-//      print(Int(vkDoc.id))
-//      let temp = Document(forPrimaryKey: Int(vkDoc.id))
-//      print(temp==nil)
-//      print(temp)
-//      if temp==nil {
-//        CurrentUser.sharedCurrentUser().rootDir.addDocument(Document(vkDoc: vkDoc as! VKDocs))
-//      }
+    let vkDocsArray = vkDocs.items
+    for vkDoc in vkDocsArray {
+      let temp = Document(forPrimaryKey: Int(vkDoc.id))
+
+      if temp==nil {
+        CurrentUser.sharedCurrentUser().rootDir.addDocument(Document(vkDoc: vkDoc as! VKDocs))
+      }
     }
     
     task.setResult("PROCCESSED")
 //    sleep(5)
+    
     return task.task
 
   }

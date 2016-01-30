@@ -9,7 +9,7 @@
 import UIKit
 import QuickLook
 
-protocol ProgressDelegate {
+@objc protocol ProgressDelegate {
   func progressDidChange(completionPercentage: Float)
 }
 
@@ -56,15 +56,16 @@ class FilesVC: UIViewController {
     definesPresentationContext = true
     
     
-//    if #available(iOS 8.0, *) {
-//      let a = DocumentImporter()
-//      a.launch()
-//      a.modalPresentationStyle = .Custom
-//      self.presentViewController(a, animated: false, completion: nil)
-//    } else {
-//      // Fallback on earlier versions
-//    }
+    if #available(iOS 8.0, *) {
+      let a = DocumentImporter()
+      a.launch()
+      a.modalPresentationStyle = .Custom
+      self.presentViewController(a, animated: false, completion: nil)
+    } else {
+      // Fallback on earlier versions
+    }
     
+    print(FCFileManager.pathForDocumentsDirectory())
   }
 
   override func didReceiveMemoryWarning() {
@@ -99,14 +100,12 @@ class FilesVC: UIViewController {
         self.refreshControl.endRefreshing()
         self.tableView.reloadData()
         
+        
 //        let docs = CurrentUser.sharedCurrentUser().documentArray.documents
-//        CurrentUser.sharedCurrentUser().rootDir.removeDoc(CurrentUser.sharedCurrentUser().documentArray.documents[0])
-//        RLMRealm.defaultRealm().beginWriteTransaction()
 //        CurrentUser.sharedCurrentUser().rootDir.mkdir("a")
 //        CurrentUser.sharedCurrentUser().rootDir.mkdir("b")
-//        print(AbstractDirectory(forPrimaryKey: "/a")!.documents())
-//        CurrentUser.sharedCurrentUser().rootDir.moveDoc(docs[0], toDir: AbstractDirectory(forPrimaryKey: "/a")!)
-//        try! RLMRealm.defaultRealm().commitWriteTransaction()
+//        
+//        CurrentUser.sharedCurrentUser().rootDir.moveDocument(docs[0], toDir: AbstractDirectory(forPrimaryKey: "/root/a")!)
         
         
         //
@@ -158,7 +157,9 @@ extension FilesVC : UITableViewDataSource {
     if tableView == self.tableView {
       let cell = tableView.dequeueReusableCellWithIdentifier("DocumentCell", forIndexPath: indexPath) as! DocumentCell
       let doc = CurrentUser.sharedCurrentUser().documentArray.documents[indexPath.row+skip(indexPath)]
+      
       doc.progressDelegate = cell
+      
       if doc.isLoading {
         cell.progressView.hidden = false
       }
@@ -238,7 +239,10 @@ extension FilesVC : UITableViewDelegate {
     } else if !doc.isLoading {
       let cell = tableView.cellForRowAtIndexPath(indexPath) as! DocumentCell
       cell.progressView.hidden = false
+//      dispatch_async(dispatch_get_main_queue(), { () -> Void in
       doc.downloadVK()
+//      })
+      
     }
   }
 
@@ -266,6 +270,11 @@ extension FilesVC : DocumentImporterDelegate {
     
 //    presentViewController(<#T##viewControllerToPresent: UIViewController##UIViewController#>, animated: <#T##Bool#>, completion: <#T##(() -> Void)?##(() -> Void)?##() -> Void#>)
     let docToUpload = UploadDocument(url: url)
+
+    docToUpload.uploadDoc().continueWithBlock { (task: BFTask) -> AnyObject? in
+      FCFileManager.copyItemAtPath(url.absoluteString, toPath: FCFileManager.pathForDocumentsDirectory())
+      return nil
+    }
     
   }
   
@@ -274,7 +283,7 @@ extension FilesVC : DocumentImporterDelegate {
 extension FilesVC : DocsProcessingDelegate {
   
   func didFinishProcessingDocs() {
-    print("DID FINISH PROCESSING CACHES")
+    print("DID FINISH PROCESSING DOCS")
   }
   
 }
