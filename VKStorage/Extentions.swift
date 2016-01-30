@@ -97,6 +97,12 @@ extension UIViewController {
     while ((topController?.presentedViewController) != nil) {
       topController = topController?.presentedViewController
     }
+    if let tabBarVC = topController as? UITabBarController {
+      topController = tabBarVC.selectedViewController
+    }
+    if let navC = topController as? UINavigationController {
+      topController = navC.viewControllers.first
+    }
     return topController!
   }
   
