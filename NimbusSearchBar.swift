@@ -183,7 +183,7 @@ class NimbusSearchBar: UISearchBar {
   }
   
   
-  func click(rec: UITapGestureRecognizer) {
+  func click(rec: UIGestureRecognizer) {
 
     
   }
@@ -314,18 +314,13 @@ extension NimbusSearchBar : UISearchBarDelegate {
   }
   func searchBar(searchBar: UISearchBar, textDidChange searchText: String) {
     let tap = UITapGestureRecognizer(target: self, action: "click:")
-    tap.numberOfTouchesRequired = 1
-    tap.numberOfTapsRequired = 1
-    
-    UIViewController.currentViewController().searchDisplayController?.searchContentsController.view.subviews.last?.userInteractionEnabled = true
-    UIViewController.currentViewController().searchDisplayController?.searchContentsController.view.subviews.last?.subviews[0].userInteractionEnabled = true
-    UIViewController.currentViewController().searchDisplayController?.searchContentsController.view.subviews.last?.subviews[1].userInteractionEnabled = true
+    tap.delegate = self
+    print( UIViewController.currentViewController().searchDisplayController?.searchContentsController.view.subviews.last?.subviews[2].subviews)
+  // UIViewController.currentViewController().searchDisplayController?.searchContentsController.view.subviews.last?.userInteractionEnabled = true
     UIViewController.currentViewController().searchDisplayController?.searchContentsController.view.subviews.last?.subviews[2].userInteractionEnabled = true
-    UIViewController.currentViewController().searchDisplayController?.searchContentsController.view.subviews.last?.addGestureRecognizer(tap)
-    UIViewController.currentViewController().searchDisplayController?.searchContentsController.view.subviews.last?.subviews[0].addGestureRecognizer(tap)
-    UIViewController.currentViewController().searchDisplayController?.searchContentsController.view.subviews.last?.subviews[1].addGestureRecognizer(tap)
+  //  UIViewController.currentViewController().searchDisplayController?.searchContentsController.view.subviews.last?.addGestureRecognizer(tap)
     UIViewController.currentViewController().searchDisplayController?.searchContentsController.view.subviews.last?.subviews[2].addGestureRecognizer(tap)
-    
+    print(UIViewController.currentViewController().searchDisplayController?.searchContentsController.view.subviews.last?.subviews[2].subviews)
   
     if textField.text?.characters.count == 0 {
       UIViewController.currentViewController().searchDisplayController?.searchResultsTableView.hidden = true
@@ -339,7 +334,23 @@ extension NimbusSearchBar : UISearchBarDelegate {
   }
   
   
+  
+  
 }
+
+
+
+extension NimbusSearchBar : UIGestureRecognizerDelegate {
+  override func gestureRecognizerShouldBegin(gestureRecognizer: UIGestureRecognizer) -> Bool {
+    
+    return true
+  }
+  func gestureRecognizer(gestureRecognizer: UIGestureRecognizer, shouldRecognizeSimultaneouslyWithGestureRecognizer otherGestureRecognizer: UIGestureRecognizer) -> Bool {
+    
+    return true
+  }
+}
+
 
 protocol NimbusSearchBarDelegate {
 
