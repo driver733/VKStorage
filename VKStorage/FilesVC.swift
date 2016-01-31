@@ -9,7 +9,7 @@
 import UIKit
 import QuickLook
 
-protocol ProgressDelegate {
+@objc protocol ProgressDelegate {
   func progressDidChange(completionPercentage: Float)
 }
 
@@ -176,7 +176,7 @@ extension FilesVC : UITableViewDataSource {
         cell.progressView.hidden = false
       }
       cell.previewImageView.sd_setImageWithURL(NSURL(string: "http://www.metrogeotechnics.org/images/doc_icon1_40.png"))
-      cell.titleLabel.text = doc.vkDoc.title
+      cell.titleLabel.text = doc.title
       cell.infoLabel.text = doc.size
       cell.separatorInset = UIEdgeInsets(top: 0, left: cell.titleLabel.frame.minX, bottom: 0, right: 7)
       return cell
@@ -275,7 +275,7 @@ extension FilesVC : QLPreviewControllerDataSource {
   func previewController(controller: QLPreviewController, previewItemAtIndex index: Int) -> QLPreviewItem {
     let realIndex = (tableView.indexPathForSelectedRow?.row)!+skip(tableView.indexPathForSelectedRow!)
     let doc = CurrentUser.sharedCurrentUser().documentArray.documents[realIndex]
-    let title = Defaults[doc.vkDoc.title].string
+    let title = Defaults[doc.title].string
     let fileURL = NSURL.fileURLWithPath(FCFileManager.pathForDocumentsDirectoryWithPath(title))
     return fileURL
   }
@@ -320,7 +320,13 @@ extension FilesVC : NimbusSearchBarDelegate {
 
 
 
-
+extension FilesVC : DocsProcessingDelegate {
+  
+  func didFinishProcessingDocs() {
+    print("DID FINISH PROCESSING DOCS")
+  }
+  
+}
 
 
 

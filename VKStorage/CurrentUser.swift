@@ -16,11 +16,29 @@ protocol LoadingStateDelegate {
 
 class CurrentUser: User {
   
+  var delegate: DocsProcessingDelegate?
   var loginLoadingStateDelegate: LoadingStateDelegate?
   var friends: VKUsersArray!
   var documentArray: DocumentArray!
   
-  override init() {}
+  var rootDir: AbstractDirectory
+  var currentDir: AbstractDirectory
+  
+  override init() {
+    
+    let realm = RLMRealm.defaultRealm()
+    if realm.isEmpty {
+      let rootDir = AbstractDirectory(name: "root", parent: nil)
+      rootDir.path = "/root"
+      realm.beginWriteTransaction()
+      realm.addOrUpdateObject(rootDir)
+      try! realm.commitWriteTransaction()
+    }
+    
+    rootDir = AbstractDirectory(forPrimaryKey: "/root")!
+    currentDir = rootDir
+
+  }
   
   private static var sharedInstance: CurrentUser!
   
@@ -47,7 +65,6 @@ class CurrentUser: User {
     } else {
       NSNotificationCenter.defaultCenter().addObserver(self, name: VKSDK_ACCESS_AUTHORIZATION_SUCCEEDED, object: nil) { (observer, notification) -> Void in
         self.loginLoadingStateDelegate?.didEndNetworingActivity()
-        Defaults[.isLoggedIn] = true
       }
     }
     VKSdk.authorize(VKSDK_AUTH_PERMISSIONS)
@@ -110,19 +127,26 @@ class CurrentUser: User {
     let task = BFTaskCompletionSource()
     VKApiDocs().get().executeWithResultBlock({ (response: VKResponse!) -> Void in
       let res = response.parsedModel as! VKDocsArray
-      self.documentArray = DocumentArray(vkDocsArray: res)
+      self.documentArray = DocumentArray()
+      
+      self.documentArray.processVKDocsArray(res)
+//      self.documentArray.processDocumentsCaches().continueWithBlock({ (result: BFTask) -> AnyObject? in
+//        //allow working with documents (displaying them?) after their docs have been processed
+//        self.delegate?.didFinishProcessingCaches()
+//        return nil
+//      })
       task.setResult(nil)
       }) { (error: NSError!) -> Void in
     }
       return task.task
   }
   
-
-  
-  
-  
 }
 
-
+protocol DocsProcessingDelegate {
+  
+  func didFinishProcessingDocs()
+  
+}
 
 

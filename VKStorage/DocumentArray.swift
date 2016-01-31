@@ -8,23 +8,25 @@
 
 import Foundation
 
-
-
 class DocumentArray {
   
-  var documents: [Document]!
+  var documents = [Document]()
   private(set) var sortInfo: SortInfo!
   
-  init(vkDocsArray: VKDocsArray) {
-    documents = [Document]()
-    for vkDocument in vkDocsArray.items {
-      let doc = Document(vkDoc: vkDocument as! VKDocs)
-      documents.append(doc)
+  init() {
+    let docs = Document.objectsWithPredicate(nil)
+    for var i=0;i<Int(docs.count);i++ {
+      documents.append(docs.objectAtIndex(UInt(i)) as! Document)
     }
+//    for vkDocument in vkDocsArray.items {
+//      let doc = Document(vkDoc: vkDocument as! VKDocs)
+//      documents.append(doc)
+//    }
+
   }
   
   func sortByName(sortType: NSComparisonResult) {
-    documents.sortInPlace({$0.vkDoc.title.localizedCompare($1.vkDoc.title) == sortType})
+    documents.sortInPlace({$0.title.localizedCompare($1.title) == sortType})
     sortInfo = nameSortInfo()
   }
   
@@ -34,7 +36,7 @@ class DocumentArray {
   }
   
   func sortBySize(sortType: NSComparisonResult) {
-    documents.sortInPlace({$0.vkDoc.size.compare($1.vkDoc.size) == sortType})
+    documents.sortInPlace({$0.size.compare($1.size) == sortType})
     sortInfo = sizeSortInfo(sortType)
   }
   
@@ -47,7 +49,7 @@ class DocumentArray {
       sizes = sizes.reverse()
     }
       for doc in documents {
-        let sizeInMB = doc.vkDoc.size.doubleValue/1024/1024
+        let sizeInMB = Double(doc.size)!/1024/1024
         switch sizeInMB {
         case _ where sizeInMB < 1:
           numberOfDocsForEachSize[indexes[0]]++
@@ -72,16 +74,16 @@ class DocumentArray {
   private func nameSortInfo() -> SortInfo {
     var numberOfUniquePrefixChars = 0
     var numberOfPrefixCharsForEachPrefix = [0]
-    var tempPrefixChar = documents[0].vkDoc.title[0]
+    var tempPrefixChar = documents.first?.title[0]
     var index = 0
     var prefixChars: [String] = [String(tempPrefixChar)]
     for doc in documents {
-      if String(doc.vkDoc.title[0]).lowercaseString != String(tempPrefixChar).lowercaseString {
-        prefixChars.append(String(doc.vkDoc.title[0]))
+      if String(doc.title[0]).lowercaseString != String(tempPrefixChar).lowercaseString {
+        prefixChars.append(String(doc.title[0]))
         numberOfPrefixCharsForEachPrefix.append(1)
         index++
         numberOfUniquePrefixChars++
-        tempPrefixChar = doc.vkDoc.title[0]
+        tempPrefixChar = doc.title[0]
       } else {
         numberOfPrefixCharsForEachPrefix[index]++
       }
@@ -93,7 +95,7 @@ class DocumentArray {
   private func uploadDateSortInfo() -> SortInfo {
     var numberOfUniquePrefixChars = 0
     var numberOfPrefixCharsForEachPrefix = [0]
-    var tempPrefixChar = dateStringFromUploadDate(documents.first!.date)
+    var tempPrefixChar = dateStringFromUploadDate((documents.first?.date)!)
     var index = 0
     var prefixChars: [String] = [String(tempPrefixChar)]
     for doc in documents {
@@ -141,10 +143,61 @@ class DocumentArray {
 }
 
 
+//DELEGATES
+extension DocumentArray {
+  
+  //adds new docs from vk to root directory
+  func processVKDocsArray(vkDocs: VKDocsArray) -> BFTask {
+    let task = BFTaskCompletionSource()
+    let vkDocsArray = vkDocs.items
+    for vkDoc in vkDocsArray {
+      let temp = Document(forPrimaryKey: Int(vkDoc.id))
+
+      if temp==nil {
+        CurrentUser.sharedCurrentUser().rootDir.addDocument(Document(vkDoc: vkDoc as! VKDocs))
+      }
+    }
+    
+    task.setResult("PROCCESSED")
+//    sleep(5)
+    
+    return task.task
+
+  }
+  
+}
 
 
-
-
+extension DocumentArray {
+  
+  //has to be sorted
+  func binarySearchDocumentForID(id: Int) -> Document? {
+    
+    let temp_doc = documents
+    var left = 0
+    var right = temp_doc.count - 1
+    
+    while (left <= right) {
+      let mid = (left + right) / 2
+      let value = temp_doc[mid].id
+      
+      if (value == id) {
+        return temp_doc[mid]
+      }
+      
+      if (value < id) {
+        left = mid + 1
+      }
+      
+      if (value > id) {
+        right = mid - 1
+      }
+    }
+    
+    return nil
+  }
+  
+}
 
 
 
