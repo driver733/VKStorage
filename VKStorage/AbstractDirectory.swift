@@ -15,6 +15,13 @@ class AbstractDirectory : RLMObject {
   dynamic var documents: RLMArray = RLMArray(objectClassName: Document.className())
   dynamic var path = ""
   dynamic var name = ""
+  var docs: [Document] {
+    var temp_docs = [Document]()
+    for var i=0;i<Int(documents.count);i++ {
+      temp_docs.append(documents.objectAtIndex(UInt(i)) as! Document)
+    }
+    return temp_docs
+  }
   
   var arrayOfChildrenDirectoriesNames: [String] {
     var names = [String]()
@@ -31,7 +38,6 @@ class AbstractDirectory : RLMObject {
     self.name = name
 
   }
-  
 
   func mkdir(name: String) -> BFTask? {
     let task = BFTaskCompletionSource()
@@ -106,6 +112,10 @@ class AbstractDirectory : RLMObject {
 //  
   override class func primaryKey() -> String {
     return "path"
+  }
+  
+  @objc override class func ignoredProperties() -> [String] {
+    return ["docs"]
   }
   
 }

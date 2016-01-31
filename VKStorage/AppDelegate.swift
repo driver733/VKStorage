@@ -12,10 +12,12 @@ import UIKit
 class AppDelegate: UIResponder, UIApplicationDelegate {
 
   var window: UIWindow?
-
+  
+  
+  
   func application(application: UIApplication, didFinishLaunchingWithOptions launchOptions: [NSObject: AnyObject]?) -> Bool {
     // Override point for customization after application launch.
-    
+    print(FCFileManager.pathForDocumentsDirectory())
     self.window = UIWindow(frame: UIScreen.mainScreen().bounds)
     
     VKSDKDelegateHandler.sharedInstance.setup { () -> Void in
