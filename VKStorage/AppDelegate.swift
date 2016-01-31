@@ -16,6 +16,12 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
   func application(application: UIApplication, didFinishLaunchingWithOptions launchOptions: [NSObject: AnyObject]?) -> Bool {
     // Override point for customization after application launch.
     
+//    let a = RLMRealmConfiguration.defaultConfiguration()
+//    a.schemaVersion = 1
+//    a.migrationBlock = { (migration: RLMMigration, old: Int64) -> Void in
+//      
+//    }
+    
     self.window = UIWindow(frame: UIScreen.mainScreen().bounds)
     
     VKSDKDelegateHandler.sharedInstance.setup { () -> Void in

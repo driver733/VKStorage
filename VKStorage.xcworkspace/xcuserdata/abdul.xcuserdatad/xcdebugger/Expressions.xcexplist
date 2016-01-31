@@ -20,10 +20,10 @@
          contextName = "Document.downloadVK() -&gt; BFTask:Document.swift">
          <PersistentStrings>
             <PersistentString
-               value = "fileName">
+               value = "isLoading">
             </PersistentString>
             <PersistentString
-               value = "isLoading">
+               value = "fileName">
             </PersistentString>
          </PersistentStrings>
       </ContextState>
@@ -48,6 +48,14 @@
       </ContextState>
       <ContextState
          contextName = "DocumentArray.processVKDocsArray(VKDocsArray) -&gt; BFTask:DocumentArray.swift">
+      </ContextState>
+      <ContextState
+         contextName = "AppDelegate.application(UIApplication, didFinishLaunchingWithOptions : [NSObject : AnyObject]?) -&gt; Bool:AppDelegate.swift">
+         <PersistentStrings>
+            <PersistentString
+               value = "print(FCFileManager.pathForDocumentsDirectory())">
+            </PersistentString>
+         </PersistentStrings>
       </ContextState>
       <ContextState
          contextName = "FilesVC.tableView(UITableView, cellForRowAtIndexPath : NSIndexPath) -&gt; UITableViewCell:FilesVC.swift">

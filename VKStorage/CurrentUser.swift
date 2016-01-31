@@ -54,7 +54,7 @@ class CurrentUser: User {
   }
   
   func login() {
-    if VKSdk.vkAppMayExists() {
+    if !VKSdk.vkAppMayExists() {
       NSNotificationCenter.defaultCenter().addObserver(self, name: VKSDK_ACCESS_AUTHORIZATION_STARTED, object: nil) { (observer, notification) -> Void in
         self.loginLoadingStateDelegate?.didStartNetworingActivity()
         NSNotificationCenter.defaultCenter().addObserver(self, name: VKSDK_ACCESS_AUTHORIZATION_SUCCEEDED, object: nil) { (observer, notification) -> Void in

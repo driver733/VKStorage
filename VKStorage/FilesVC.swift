@@ -270,11 +270,11 @@ extension FilesVC : DocumentImporterDelegate {
     
 //    presentViewController(<#T##viewControllerToPresent: UIViewController##UIViewController#>, animated: <#T##Bool#>, completion: <#T##(() -> Void)?##(() -> Void)?##() -> Void#>)
     let docToUpload = UploadDocument(url: url)
-
-    docToUpload.uploadDoc().continueWithBlock { (task: BFTask) -> AnyObject? in
-      FCFileManager.copyItemAtPath(url.absoluteString, toPath: FCFileManager.pathForDocumentsDirectory())
-      return nil
-    }
+    print(url)
+//    docToUpload.uploadDoc().continueWithBlock { (task: BFTask) -> AnyObject? in
+//      FCFileManager.copyItemAtPath(url.absoluteString, toPath: FCFileManager.pathForDocumentsDirectory())
+//      return nil
+//    }
     
   }
   

@@ -10,18 +10,6 @@ import Foundation
 
 class Document : RLMObject {
   
-  /// vkDoc instance associated with the Document
-//  var vkDoc: VKDocs!
-  
-//  var docCache: Document {
-//    
-//    if let doc = Document(forPrimaryKey: self.id) {
-//      return doc
-//    }
-//    return Document(doc: self)
-//    
-//  }
-  
   /// Date when the document was modified
   dynamic var date: NSDate = NSDate()
   /// Formatted size of the document
@@ -61,9 +49,9 @@ class Document : RLMObject {
     //    self.photo_130 = vkDoc.photo_130
 
   }
-  
-  //Тут полный треш с title и suggestedFilename 
-  //suggestedFilename перербатывает имя объекта или вк возвращает имя отличное от тайтла
+
+//  Тут полный треш с title и suggestedFilename 
+//  suggestedFilename перербатывает имя объекта или вк возвращает имя отличное от тайтла
   func downloadVK() -> BFTask {
     
     self.isLoading = true

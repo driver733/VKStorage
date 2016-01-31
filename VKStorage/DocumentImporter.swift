@@ -44,6 +44,7 @@ class DocumentImporter: UIViewController, UIDocumentMenuDelegate, UIDocumentPick
   @objc internal func documentPicker(controller: UIDocumentPickerViewController, didPickDocumentAtURL url: NSURL) {
     
     self.dismissViewControllerAnimated(true, completion: nil)
+    print(url)
     delegate?.documentWasPickedAtURL(url)
     
   }
