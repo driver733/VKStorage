@@ -48,33 +48,33 @@ class DocumentArray {
       indexes = indexes.reverse()
       sizes = sizes.reverse()
     }
-      for doc in documents {
-        let sizeInMB = Double(doc.size)!/1024/1024
-        switch sizeInMB {
-        case _ where sizeInMB < 1:
-          numberOfDocsForEachSize[indexes[0]]++
-        case _ where sizeInMB > 1 && sizeInMB < 5:
-          numberOfDocsForEachSize[indexes[1]]++
-        case _ where sizeInMB > 5 && sizeInMB < 10:
-          numberOfDocsForEachSize[indexes[2]]++
-        case _ where sizeInMB > 10 && sizeInMB < 25:
-         numberOfDocsForEachSize[indexes[3]]++
-        case _ where sizeInMB > 25 && sizeInMB < 50:
-          numberOfDocsForEachSize[indexes[4]]++
-        case _ where sizeInMB > 50 && sizeInMB < 100:
-          numberOfDocsForEachSize[indexes[5]]++
-        case _ where sizeInMB > 100 && sizeInMB < 200:
-          numberOfDocsForEachSize[indexes[6]]++
-        default: break
-        }
+    for doc in documents {
+      let sizeInMB = Double(doc.size)!/1024/1024
+      switch sizeInMB {
+      case _ where sizeInMB < 1:
+        numberOfDocsForEachSize[indexes[0]]++
+      case _ where sizeInMB > 1 && sizeInMB < 5:
+        numberOfDocsForEachSize[indexes[1]]++
+      case _ where sizeInMB > 5 && sizeInMB < 10:
+        numberOfDocsForEachSize[indexes[2]]++
+      case _ where sizeInMB > 10 && sizeInMB < 25:
+        numberOfDocsForEachSize[indexes[3]]++
+      case _ where sizeInMB > 25 && sizeInMB < 50:
+        numberOfDocsForEachSize[indexes[4]]++
+      case _ where sizeInMB > 50 && sizeInMB < 100:
+        numberOfDocsForEachSize[indexes[5]]++
+      case _ where sizeInMB > 100 && sizeInMB < 200:
+        numberOfDocsForEachSize[indexes[6]]++
+      default: break
       }
+    }
     return SortInfo(numberOfSections: sizes.count, sortType: .Size, numberOfRowsInSections: numberOfDocsForEachSize, titleForHeaderInSection: sizes)
   }
   
   private func nameSortInfo() -> SortInfo {
     var numberOfUniquePrefixChars = 0
     var numberOfPrefixCharsForEachPrefix = [0]
-    var tempPrefixChar = documents.first?.title[0]
+    var tempPrefixChar = documents[0].title[0]
     var index = 0
     var prefixChars: [String] = [String(tempPrefixChar)]
     for doc in documents {
@@ -95,7 +95,7 @@ class DocumentArray {
   private func uploadDateSortInfo() -> SortInfo {
     var numberOfUniquePrefixChars = 0
     var numberOfPrefixCharsForEachPrefix = [0]
-    var tempPrefixChar = dateStringFromUploadDate((documents.first?.date)!)
+    var tempPrefixChar = dateStringFromUploadDate(documents.first!.date)
     var index = 0
     var prefixChars: [String] = [String(tempPrefixChar)]
     for doc in documents {
