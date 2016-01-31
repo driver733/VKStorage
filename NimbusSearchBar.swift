@@ -183,9 +183,9 @@ class NimbusSearchBar: UISearchBar {
   }
   
   
-  func click(rec: UIGestureRecognizer) {
+  func click(rec: UITapGestureRecognizer) {
 
-    
+    delegate?.searchBarTextDidEndEditing?(self)
   }
   
   
@@ -281,9 +281,18 @@ extension NimbusSearchBar : UITextFieldDelegate {
 
 extension NimbusSearchBar : UISearchBarDelegate {
   func searchBarTextDidBeginEditing(searchBar: UISearchBar) {
+    NSTimer.after(0) { () -> Void in
+      struct Tokens { static var token: dispatch_once_t = 0 }
+      dispatch_once(&Tokens.token) {
+        let tap = UITapGestureRecognizer(target: self, action: "click:")
+        let view = UIViewController.currentViewController().searchDisplayController?.searchContentsController.view.subviews.last?.subviews[2]
+        let newView = UIView(frame: view!.frame)
+        newView.addGestureRecognizer(tap)
+        UIViewController.currentViewController().searchDisplayController?.searchContentsController.view.subviews.last?.addSubview(newView)
+      }
+    }
+    print(UIViewController.currentViewController().searchDisplayController?.searchContentsController.view.subviews.last)
     
-    print(UIViewController.currentViewController().searchDisplayController?.searchContentsController.view.subviews.last?.subviews)
-
     UIViewController.currentViewController().searchDisplayController?.searchResultsTableView.contentInset = UIEdgeInsetsMake(64, 0, 0, 0)
     UIViewController.currentViewController().searchDisplayController?.setActive(true, animated: true)
     
@@ -294,7 +303,7 @@ extension NimbusSearchBar : UISearchBarDelegate {
       UIViewController.currentViewController().searchDisplayController?.searchResultsTableView.hidden = false
       UIViewController.currentViewController().searchDisplayController?.searchContentsController.view.subviews.last?.subviews[2].hidden = true  // dimmingView
     }
-   // UIViewController.currentViewController().searchDisplayController?.delegate?.searchDisplayControllerDidBeginSearch?(UIViewController.currentViewController().searchDisplayController!)
+
     nimbusSearchBarDelegate?.nimbusSearchBarTextDidBeginEditing(self)
   }
   func searchBarTextDidEndEditing(searchBar: UISearchBar) {
@@ -313,15 +322,7 @@ extension NimbusSearchBar : UISearchBarDelegate {
     return true
   }
   func searchBar(searchBar: UISearchBar, textDidChange searchText: String) {
-    let tap = UITapGestureRecognizer(target: self, action: "click:")
-    tap.delegate = self
-    print( UIViewController.currentViewController().searchDisplayController?.searchContentsController.view.subviews.last?.subviews[2].subviews)
-  // UIViewController.currentViewController().searchDisplayController?.searchContentsController.view.subviews.last?.userInteractionEnabled = true
-    UIViewController.currentViewController().searchDisplayController?.searchContentsController.view.subviews.last?.subviews[2].userInteractionEnabled = true
-  //  UIViewController.currentViewController().searchDisplayController?.searchContentsController.view.subviews.last?.addGestureRecognizer(tap)
-    UIViewController.currentViewController().searchDisplayController?.searchContentsController.view.subviews.last?.subviews[2].addGestureRecognizer(tap)
-    print(UIViewController.currentViewController().searchDisplayController?.searchContentsController.view.subviews.last?.subviews[2].subviews)
-  
+    
     if textField.text?.characters.count == 0 {
       UIViewController.currentViewController().searchDisplayController?.searchResultsTableView.hidden = true
       UIViewController.currentViewController().searchDisplayController?.searchContentsController.view.subviews.last?.subviews[2].hidden = false  // dimmingView
@@ -340,16 +341,16 @@ extension NimbusSearchBar : UISearchBarDelegate {
 
 
 
-extension NimbusSearchBar : UIGestureRecognizerDelegate {
-  override func gestureRecognizerShouldBegin(gestureRecognizer: UIGestureRecognizer) -> Bool {
-    
-    return true
-  }
-  func gestureRecognizer(gestureRecognizer: UIGestureRecognizer, shouldRecognizeSimultaneouslyWithGestureRecognizer otherGestureRecognizer: UIGestureRecognizer) -> Bool {
-    
-    return true
-  }
-}
+//extension NimbusSearchBar : UIGestureRecognizerDelegate {
+//  override func gestureRecognizerShouldBegin(gestureRecognizer: UIGestureRecognizer) -> Bool {
+//    
+//    return true
+//  }
+//  func gestureRecognizer(gestureRecognizer: UIGestureRecognizer, shouldRecognizeSimultaneouslyWithGestureRecognizer otherGestureRecognizer: UIGestureRecognizer) -> Bool {
+//    
+//    return true
+//  }
+//}
 
 
 protocol NimbusSearchBarDelegate {

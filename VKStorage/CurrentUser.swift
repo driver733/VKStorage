@@ -47,6 +47,7 @@ class CurrentUser: User {
     } else {
       NSNotificationCenter.defaultCenter().addObserver(self, name: VKSDK_ACCESS_AUTHORIZATION_SUCCEEDED, object: nil) { (observer, notification) -> Void in
         self.loginLoadingStateDelegate?.didEndNetworingActivity()
+        Defaults[.isLoggedIn] = true
       }
     }
     VKSdk.authorize(VKSDK_AUTH_PERMISSIONS)
