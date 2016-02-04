@@ -20,8 +20,18 @@ class SearchQuery {
     "Other"       : []
   ]
   
+  private let extentionsIndex = "Extentions"
+  private let datesIndex      = "Dates"
+  private let typesIndex      = "Types"
+  
+  private var configurations: [String: [String]]
+  
   init() {
-
+    configurations = [
+      extentionsIndex : [String](),
+      datesIndex      : [String](),
+      typesIndex      : [String]()
+    ]
   }
   
   //Implement dispatch_async?
@@ -35,18 +45,17 @@ class SearchQuery {
     var suggestions = [String : [String]]()
     
     extentionsStartingWith(suggest).continueWithBlock { (task: BFTask) -> AnyObject? in
-      suggestions["Extentions"] = task.result as? [String]
+      suggestions[self.extentionsIndex] = task.result as? [String]
       return nil
     }
     
-    
     datesStartingWith(suggest).continueWithBlock { (task: BFTask) -> AnyObject? in
-      suggestions["Dates"] = task.result as? [String]
+      suggestions[self.datesIndex] = task.result as? [String]
       return nil
     }
     
     typesStartingWith(suggest).continueWithBlock { (task: BFTask) -> AnyObject? in
-      suggestions["Types"] = task.result as? [String]
+      suggestions[self.typesIndex] = task.result as? [String]
       return nil
     }
     
@@ -63,30 +72,13 @@ class SearchQuery {
     
       let filteredDocs = docs.filter() { $0.ext.hasPrefix(str) }
       for doc in filteredDocs {
-        extentions.append(doc.ext)
+        if !configurations[self.extentionsIndex]!.contains(doc.ext) {
+          extentions.append(doc.ext)
+        }
       }
       task.setResult(distinct(extentions))
       
       return task.task
-  }
-  
-//  func typesIn(str: [String], allTypes: [String : [String]]) -> BFTask {
-//    let task = BFTaskCompletionSource()
-//    
-//    var types = [String]()
-//    for typeSet in allTypes.keys {
-//      
-//    }
-//    
-//    return task.task
-//  }
-  
-  func typesStartingWith(str: String) -> BFTask {
-    let task = BFTaskCompletionSource()
-    
-    task.setResult(Array<String>(documentTypes.keys).filter() { $0.hasPrefix(str) })
-    
-    return task.task
   }
   
   func datesStartingWith(str: String) -> BFTask {
@@ -98,10 +90,26 @@ class SearchQuery {
     var stringDates = [String]()
     let filteredDocs = docs.filter() { dateFormatter.stringFromDate($0.date).hasPrefix(str) }
     for doc in filteredDocs {
-      stringDates.append(dateFormatter.stringFromDate(doc.date))
+      if !configurations[self.datesIndex]!.contains(dateFormatter.stringFromDate(doc.date)) {
+        stringDates.append(dateFormatter.stringFromDate(doc.date))
+      }
     }
     
     task.setResult(distinct(stringDates))
+    
+    return task.task
+  }
+  
+  func typesStartingWith(str: String) -> BFTask {
+    let task = BFTaskCompletionSource()
+    
+    var filteredTypes = Array<String>(documentTypes.keys).filter() { $0.hasPrefix(str) }
+    
+    for config in configurations[self.typesIndex]! {
+      if let index = filteredTypes.indexOf(config) {
+        filteredTypes.removeAtIndex(index)
+      }
+    }
     
     return task.task
   }
@@ -119,8 +127,8 @@ class SearchQuery {
   
   func defaultSuggest() -> [String: [String]] {
     return [
-      "Types"      : Array<String>(documentTypes.keys),
-      "Extentions" : {
+      self.typesIndex      : Array<String>(documentTypes.keys),
+      self.extentionsIndex : {
         var extentionSet = Set<String>()
         for doc in docs {
           extentionSet.insert(doc.ext)
@@ -129,5 +137,10 @@ class SearchQuery {
         }()
     ]
   }
+  
+//  func addConfiguration(str: String, forKey: String) -> Bool {
+//    configurations[forKey]?.append(str)
+//    return true
+//  }
   
 }
