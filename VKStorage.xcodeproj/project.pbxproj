@@ -71,6 +71,7 @@
 		8FEB05D31C40997B0041F37C /* AddCell.xib in Resources */ = {isa = PBXBuildFile; fileRef = 8FEB05D11C40997B0041F37C /* AddCell.xib */; };
 		94C4AE5029EBE7AB6E1135B8 /* libPods-VKStorage.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 3A941FE013B6AEF7AE37929B /* libPods-VKStorage.a */; };
 		961027131C42227B007B4588 /* 1.jpg in Resources */ = {isa = PBXBuildFile; fileRef = 961027121C42227B007B4588 /* 1.jpg */; };
+		96AF6E9D1C5DDE70005360E1 /* SearchQuery.swift in Sources */ = {isa = PBXBuildFile; fileRef = 96AF6E9C1C5DDE70005360E1 /* SearchQuery.swift */; };
 		96D60ED11C4347A50075D8D9 /* 2.jpg in Resources */ = {isa = PBXBuildFile; fileRef = 96D60ED01C4347A50075D8D9 /* 2.jpg */; };
 /* End PBXBuildFile section */
 
@@ -169,6 +170,7 @@
 		8FEB05D01C40997B0041F37C /* AddCell.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = AddCell.swift; sourceTree = "<group>"; };
 		8FEB05D11C40997B0041F37C /* AddCell.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = AddCell.xib; sourceTree = "<group>"; };
 		961027121C42227B007B4588 /* 1.jpg */ = {isa = PBXFileReference; lastKnownFileType = image.jpeg; path = 1.jpg; sourceTree = "<group>"; };
+		96AF6E9C1C5DDE70005360E1 /* SearchQuery.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SearchQuery.swift; sourceTree = "<group>"; };
 		96D60ED01C4347A50075D8D9 /* 2.jpg */ = {isa = PBXFileReference; lastKnownFileType = image.jpeg; path = 2.jpg; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
@@ -392,9 +394,18 @@
 			name = AddCell;
 			sourceTree = "<group>";
 		};
+		96AF6E9B1C5DDE4F005360E1 /* Search */ = {
+			isa = PBXGroup;
+			children = (
+				96AF6E9C1C5DDE70005360E1 /* SearchQuery.swift */,
+			);
+			name = Search;
+			sourceTree = "<group>";
+		};
 		96E974B11C454CD9005FCE2E /* AbstracFS */ = {
 			isa = PBXGroup;
 			children = (
+				96AF6E9B1C5DDE4F005360E1 /* Search */,
 				8FCF20671C5D95A700EB6275 /* AbstractDirectory.swift */,
 			);
 			name = AbstracFS;
@@ -663,6 +674,7 @@
 				8F47858A1C38A75B00883E48 /* FilesVC.swift in Sources */,
 				8FEB05A11C3F41B60041F37C /* MultipartFormData.swift in Sources */,
 				8F3689301C527036008AB9EB /* ConstraintItem.swift in Sources */,
+				96AF6E9D1C5DDE70005360E1 /* SearchQuery.swift in Sources */,
 				8F3689311C527036008AB9EB /* ConstraintMaker.swift in Sources */,
 				8F1BD6671C3C274600190E79 /* User.swift in Sources */,
 				8F7552BC1C3C541B004132E8 /* SwiftyUserDefaults.swift in Sources */,

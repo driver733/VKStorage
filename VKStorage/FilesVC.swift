@@ -131,6 +131,7 @@ class FilesVC: UIViewController {
         self.refreshControl.endRefreshing()
         self.tableView.reloadData()
       })
+      
       return nil
     }
     let docs = CurrentUser.sharedCurrentUser().rootDir.docs
