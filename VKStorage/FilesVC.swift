@@ -134,6 +134,14 @@ class FilesVC: UIViewController {
       
       return nil
     }
+    let docs = CurrentUser.sharedCurrentUser().rootDir.docs
+    CurrentUser.sharedCurrentUser().rootDir.mkdir("abdul")
+    CurrentUser.sharedCurrentUser().rootDir.moveDocument(docs[0], toDir: CurrentUser.sharedCurrentUser().rootDir.childrenDirectories.objectAtIndex(0) as! AbstractDirectory)
+    CurrentUser.sharedCurrentUser().currentDir = CurrentUser.sharedCurrentUser().rootDir.childrenDirectories.objectAtIndex(0) as! AbstractDirectory
+    for doc in CurrentUser.sharedCurrentUser().currentDir.docs {
+      print(doc.title)
+    }
+    
   }
   
   func didTapAddButton(sender: UIBarButtonItem) {
