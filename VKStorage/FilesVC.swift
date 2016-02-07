@@ -131,8 +131,6 @@ class FilesVC: UIViewController {
         self.refreshControl.endRefreshing()
         self.tableView.reloadData()
       })
-      let a = SearchQuery().suggestConfiguration("")
-      print(a)
       
       return nil
     }
