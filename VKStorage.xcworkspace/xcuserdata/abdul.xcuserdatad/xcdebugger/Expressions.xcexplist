@@ -3,9 +3,6 @@
    version = "1.0">
    <ContextStates>
       <ContextState
-         contextName = "AppDelegate.window.getter:AppDelegate.swift">
-      </ContextState>
-      <ContextState
          contextName = "AppDelegate.application(UIApplication, didFinishLaunchingWithOptions : [NSObject : AnyObject]?) -&gt; Bool:AppDelegate.swift">
       </ContextState>
       <ContextState
@@ -13,6 +10,23 @@
          <PersistentStrings>
             <PersistentString
                value = "Document.objectsWithPredicate(NSPredicate(format: &quot;name == Biboran.gif&quot;, argumentArray: nil))">
+            </PersistentString>
+         </PersistentStrings>
+      </ContextState>
+      <ContextState
+         contextName = "AppDelegate.window.getter:AppDelegate.swift">
+      </ContextState>
+      <ContextState
+         contextName = "FilesVC.(refresh(FilesVC) -&gt; (AnyObject?) -&gt; ()).(closure #1):FilesVC.swift">
+         <PersistentStrings>
+            <PersistentString
+               value = "SearchQuery().suggestConfiguration(&quot;g&quot;)&#10;SearchQuery().suggestConfiguration(&quot;g&quot;)&#10;">
+            </PersistentString>
+            <PersistentString
+               value = "SearchQuery().suggestConfiguration(&quot;&quot;)">
+            </PersistentString>
+            <PersistentString
+               value = "SearchQuery().suggestConfiguration(&quot;g&quot;)[0].1[0].name">
             </PersistentString>
          </PersistentStrings>
       </ContextState>
