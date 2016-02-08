@@ -24,14 +24,18 @@ class SearchQuery {
   private let datesName      = "Dates"
   private let typesName      = "Types"
   
-  private var configurations: [String: [String]]
+  private var configurations : [SearchConfig]
+  private var configurationsNames : [String] {
+   return Array<String>(configurations.map() { $0.name })
+  }
   
   init() {
-    configurations = [
-      extentionsName : [String](),
-      datesName      : [String](),
-      typesName      : [String]()
-    ]
+//    configurations = [
+//      extentionsName : [String](),
+//      datesName      : [String](),
+//      typesName      : [String]()
+//    ]
+    configurations = [SearchConfig]()
   }
   
   //Implement dispatch_async?
@@ -79,7 +83,7 @@ class SearchQuery {
     
     let filteredDocs = docs.filter() { $0.ext.lowercaseString.hasPrefix(str.lowercaseString) }
     for doc in filteredDocs {
-      if !configurations[self.extentionsName]!.contains(doc.ext) {
+      if !configurationsNames.contains(doc.ext) {
         extentions.insert(SearchConfig(name: doc.ext, type: .Extention))
       }
     }
@@ -101,7 +105,7 @@ class SearchQuery {
     
     let filteredDocs = docs.filter() { dateFormatter.stringFromDate($0.date).lowercaseString.hasPrefix(str.lowercaseString) }
     for doc in filteredDocs {
-      if !configurations[self.datesName]!.contains(dateFormatter.stringFromDate(doc.date)) {
+      if !configurationsNames.contains(dateFormatter.stringFromDate(doc.date)) {
         stringDates.insert(SearchConfig(name: dateFormatter.stringFromDate(doc.date), shortName: sdateFormatter.stringFromDate(doc.date), type: .Date))
       }
     }
@@ -116,13 +120,13 @@ class SearchQuery {
     
     var filteredTypes = Array<String>(documentTypes.keys).filter() { $0.lowercaseString.hasPrefix(str.lowercaseString) }
     
-    for config in configurations[self.typesName]! {
+    for config in configurationsNames {
       if let index = filteredTypes.indexOf(config) {
         filteredTypes.removeAtIndex(index)
       }
     }
-    let a = Array<SearchConfig>(filteredTypes.map() { SearchConfig(name: $0, type: .Type) })
-    task.setResult(a)
+    let types = Array<SearchConfig>(filteredTypes.map() { SearchConfig(name: $0, type: .Type) })
+    task.setResult(types)
     
     return task.task
   }
@@ -154,10 +158,11 @@ class SearchQuery {
     ]
   }
   
-  func addConfiguration(str: String, forKey: String) -> Bool {
-    configurations[forKey]?.append(str)
+  func addConfiguration(conf: SearchConfig) -> Bool {
+    configurations.append(conf)
     return true
   }
+  
   
 }
 
