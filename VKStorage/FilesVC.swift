@@ -141,6 +141,7 @@ class FilesVC: UIViewController {
     for doc in CurrentUser.sharedCurrentUser().currentDir.docs {
       print(doc.title)
     }
+
     
   }
   
