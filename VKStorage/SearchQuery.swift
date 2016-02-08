@@ -5,7 +5,7 @@
 //  Created by Timofey on 1/31/16.
 //  Copyright © 2016 BIBORAM. All rights reserved.
 //
-
+//TODO: Убрать категории которых нет, сделать типы документов
 import Foundation
 
 class SearchQuery {
@@ -35,32 +35,32 @@ class SearchQuery {
   }
   
   //Implement dispatch_async?
-  func suggestConfiguration(suggest: String) -> [(String, [TupledName])] {
+  func suggestConfiguration(suggest: String) -> [(String, [SearchConfig])] {
     
     if suggest.isEmpty {
       //Default return
       return defaultSuggest()
     }
     
-    var suggestions = [(String, [TupledName])]()
+    var suggestions = [(String, [SearchConfig])]()
     
     extentionsStartingWith(suggest).continueWithBlock { (task: BFTask) -> AnyObject? in
       
-      if let a = task.result as? [TupledName] {
+      if let a = task.result as? [SearchConfig] {
         suggestions.append(self.extentionsName, a)
       }
       return nil
     }
     
     datesStartingWith(suggest).continueWithBlock { (task: BFTask) -> AnyObject? in
-      if let a = task.result as? [TupledName] {
+      if let a = task.result as? [SearchConfig] {
         suggestions.append(self.datesName, a)
       }
       return nil
     }
     
     typesStartingWith(suggest).continueWithBlock { (task: BFTask) -> AnyObject? in
-      if let a = task.result as? [TupledName] {
+      if let a = task.result as? [SearchConfig] {
         suggestions.append(self.typesName, a)
       }
       return nil
@@ -75,16 +75,16 @@ class SearchQuery {
   func extentionsStartingWith(str: String) -> BFTask {
     let task = BFTaskCompletionSource()
     
-    var extentions = Set<TupledName>()
+    var extentions = Set<SearchConfig>()
     
     let filteredDocs = docs.filter() { $0.ext.lowercaseString.hasPrefix(str.lowercaseString) }
     for doc in filteredDocs {
       if !configurations[self.extentionsName]!.contains(doc.ext) {
-        extentions.insert(TupledName(name: doc.ext))
+        extentions.insert(SearchConfig(name: doc.ext, type: .Extention))
       }
     }
 
-    task.setResult(Array<TupledName>(extentions))
+    task.setResult(Array<SearchConfig>(extentions))
   
     return task.task
   }
@@ -97,16 +97,16 @@ class SearchQuery {
     let sdateFormatter = NSDateFormatter()
     sdateFormatter.dateFormat = "MM yyyy"
     
-    var stringDates = Set<TupledName>()
+    var stringDates = Set<SearchConfig>()
     
     let filteredDocs = docs.filter() { dateFormatter.stringFromDate($0.date).lowercaseString.hasPrefix(str.lowercaseString) }
     for doc in filteredDocs {
       if !configurations[self.datesName]!.contains(dateFormatter.stringFromDate(doc.date)) {
-        stringDates.insert(TupledName(name: dateFormatter.stringFromDate(doc.date), shortName: sdateFormatter.stringFromDate(doc.date)))
+        stringDates.insert(SearchConfig(name: dateFormatter.stringFromDate(doc.date), shortName: sdateFormatter.stringFromDate(doc.date), type: .Date))
       }
     }
     
-    task.setResult(Array<TupledName>(stringDates))
+    task.setResult(Array<SearchConfig>(stringDates))
     
     return task.task
   }
@@ -121,22 +121,24 @@ class SearchQuery {
         filteredTypes.removeAtIndex(index)
       }
     }
+    let a = Array<SearchConfig>(filteredTypes.map() { SearchConfig(name: $0, type: .Type) })
+    task.setResult(a)
     
     return task.task
   }
   
-  func defaultSuggest() -> [(String, [TupledName])] {
+  func defaultSuggest() -> [(String, [SearchConfig])] {
     return [
-      (self.typesName      , Array<TupledName>(documentTypes.keys.map() { TupledName(name: $0) })),
+      (self.typesName      , Array<SearchConfig>(documentTypes.keys.map() { SearchConfig(name: $0, type: .Type) })),
       (self.extentionsName , {
-        var extentionsSet = Set<TupledName>()
+        var extentionsSet = Set<SearchConfig>()
         for doc in docs {
-          extentionsSet.insert(TupledName(name: doc.ext))
+          extentionsSet.insert(SearchConfig(name: doc.ext, type: .Extention))
         }
-        return Array<TupledName>(extentionsSet)
+        return Array<SearchConfig>(extentionsSet)
       }()),
       (self.datesName      , {
-        var datesSet = Set<TupledName>()
+        var datesSet = Set<SearchConfig>()
         
         let dateFormatter = NSDateFormatter()
         dateFormatter.dateFormat = "MMMM yyyy"
@@ -144,42 +146,51 @@ class SearchQuery {
         sdateFormatter.dateFormat = "MM yyyy"
         
         for doc in docs {
-          datesSet.insert(TupledName(name: dateFormatter.stringFromDate(doc.date), shortName: sdateFormatter.stringFromDate(doc.date)))
+          datesSet.insert(SearchConfig(name: dateFormatter.stringFromDate(doc.date), shortName: sdateFormatter.stringFromDate(doc.date), type: .Date))
         }
-        return Array<TupledName>(datesSet)
+        return Array<SearchConfig>(datesSet)
       }())
       
     ]
   }
   
-//  func addConfiguration(str: String, forKey: String) -> Bool {
-//    configurations[forKey]?.append(str)
-//    return true
-//  }
+  func addConfiguration(str: String, forKey: String) -> Bool {
+    configurations[forKey]?.append(str)
+    return true
+  }
   
 }
 
-class TupledName: AnyObject, Hashable {
+enum SearchConfigType {
+  case Date
+  case Type
+  case Extention
+}
+
+class SearchConfig: AnyObject, Hashable {
   
   var shortName : String?
   var name      : String
+  var type      : SearchConfigType
   
   var hashValue : Int {
       return name.hashValue
   }
   
-  init(name: String, shortName: String) {
+  init(name: String, shortName: String, type: SearchConfigType) {
     self.name      = name
     self.shortName = shortName
+    self.type      = type
   }
   
-  init(name: String) {
+  init(name: String, type: SearchConfigType) {
     self.name      = name
+    self.type      = type
   }
   
 }
 
-func ==(lhs: TupledName, rhs: TupledName) -> Bool {
+func ==(lhs: SearchConfig, rhs: SearchConfig) -> Bool {
   return lhs.hashValue == rhs.hashValue
 }
 
