@@ -14,11 +14,21 @@ class SearchQuery {
   
   private let documentTypes = [
     "Documents"   : ["pdf"],
-    "Archieves"   : ["rar"],
-    "Pictures"    : ["jpg"],
-    "Animations"  : ["gif"],
+    "Archieves"   : ["rar", "zip"],
+    "Pictures"    : ["jpg", "png", "jpeg"],
+    "Animations"  : ["gif", ""],
     "Other"       : []
   ]
+  
+  private var knownTypes : [String] {
+    var types = [String]()
+    for key in documentTypes.keys {
+      for type in documentTypes[key]! {
+        types.append(type)
+      }
+    }
+    return types
+  }
   
   private let extentionsName = "Extentions:"
   private let datesName      = "Dates:"
@@ -131,6 +141,7 @@ class SearchQuery {
     
     var filteredTypes = Array<String>(documentTypes.keys).filter() { $0.lowercaseString.hasPrefix(str.lowercaseString) }
     
+    //config here is a String, refactor?
     for config in (namesArray(configurations[typesName]!)) {
       if let index = filteredTypes.indexOf(config) {
         filteredTypes.removeAtIndex(index)
@@ -220,7 +231,7 @@ class SearchQuery {
             docSet.insert(i)
           }
         case .Type:
-          let result = docs.filter() { documentTypes[config.name]!.contains($0.ext.lowercaseString) }
+          let result = docs.filter() { documentTypes[config.name]!.contains($0.ext.lowercaseString) || (config.name == "Other" && !knownTypes.contains($0.ext.lowercaseString)) }
           for i in result {
             docSet.insert(i)
           }
