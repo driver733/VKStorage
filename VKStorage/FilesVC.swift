@@ -131,7 +131,6 @@ class FilesVC: UIViewController {
         self.refreshControl.endRefreshing()
         self.tableView.reloadData()
       })
-      
       return nil
     }
 //    let docs = CurrentUser.sharedCurrentUser().rootDir.docs
@@ -141,8 +140,6 @@ class FilesVC: UIViewController {
 //    for doc in CurrentUser.sharedCurrentUser().currentDir.docs {
 //      print(doc.title)
 //    }
-
-    
   }
   
   func didTapAddButton(sender: UIBarButtonItem) {

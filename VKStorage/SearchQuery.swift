@@ -88,25 +88,26 @@ class SearchQuery {
   
   func extentionsStartingWith(str: String) -> BFTask {
     let task = BFTaskCompletionSource()
+    let filteredDocs = self.docs.filter() { $0.ext.lowercaseString.hasPrefix(str.lowercaseString) }
     
-    var extentions = Set<SearchConfig>()
-    
-    let filteredDocs = docs.filter() { $0.ext.lowercaseString.hasPrefix(str.lowercaseString) }
-    for doc in filteredDocs {
-      if !namesArray(configurations[extentionsName]!).contains(doc.ext) {
-        extentions.insert(SearchConfig(name: doc.ext, type: .Extention))
+    let filteredExts = filteredDocs.map() { $0.ext }
+    dispatch_async(dispatch_queue_create("q1", nil)) { () -> Void in
+      var extentions = Set<SearchConfig>()
+      
+      for ext in filteredExts {
+        if !self.namesArray(self.configurations[self.extentionsName]!).contains(ext) {
+          extentions.insert(SearchConfig(name: ext, type: .Extention))
+        }
+      }
+      let result = Array<SearchConfig>(extentions)
+      print(result.first?.name)
+      if !result.isEmpty {
+        task.setResult(result)
+      }
+      else {
+        task.setResult(nil)
       }
     }
-    
-    let result = Array<SearchConfig>(extentions)
-    print(result.first?.name)
-    if !result.isEmpty {
-      task.setResult(result)
-    }
-    else {
-      task.setResult(nil)
-    }
-  
     return task.task
   }
   
@@ -115,22 +116,26 @@ class SearchQuery {
     
     let dateFormatter = NSDateFormatter()
     dateFormatter.dateFormat = "MMMM yyyy"
+    let filteredDocs = self.docs.filter() { dateFormatter.stringFromDate($0.date).lowercaseString.hasPrefix(str.lowercaseString) }
     
-    var stringDates = Set<SearchConfig>()
+    let filteredDates = filteredDocs.map() { dateFormatter.stringFromDate($0.date) }
     
-    let filteredDocs = docs.filter() { dateFormatter.stringFromDate($0.date).lowercaseString.hasPrefix(str.lowercaseString) }
-    for doc in filteredDocs {
-      if !namesArray(configurations[datesName]!).contains(dateFormatter.stringFromDate(doc.date)) {
-        stringDates.insert(SearchConfig(name: dateFormatter.stringFromDate(doc.date), type: .Date))
+    dispatch_async(dispatch_queue_create("q2", nil)) { () -> Void in
+      
+      var stringDates = Set<SearchConfig>()
+
+      for date in filteredDates {
+        if !self.namesArray(self.configurations[self.datesName]!).contains(date) {
+          stringDates.insert(SearchConfig(name: date, type: .Date))
+        }
       }
-    }
-    
-    let result = Array<SearchConfig>(stringDates)
-    if !result.isEmpty {
-      task.setResult(result)
-    }
-    else {
-      task.setResult(nil)
+      let result = Array<SearchConfig>(stringDates)
+      if !result.isEmpty {
+        task.setResult(result)
+      }
+      else {
+        task.setResult(nil)
+      }
     }
     
     return task.task
@@ -139,21 +144,23 @@ class SearchQuery {
   func typesStartingWith(str: String) -> BFTask {
     let task = BFTaskCompletionSource()
     
-    var filteredTypes = Array<String>(documentTypes.keys).filter() { $0.lowercaseString.hasPrefix(str.lowercaseString) }
-    
-    //config here is a String, refactor?
-    for config in (namesArray(configurations[typesName]!)) {
-      if let index = filteredTypes.indexOf(config) {
-        filteredTypes.removeAtIndex(index)
+    dispatch_async(dispatch_queue_create("q3", nil)) { () -> Void in
+      var filteredTypes = Array<String>(self.documentTypes.keys).filter() { $0.lowercaseString.hasPrefix(str.lowercaseString) }
+      
+      //config here is a String, refactor?
+      for config in (self.namesArray(self.configurations[self.typesName]!)) {
+        if let index = filteredTypes.indexOf(config) {
+          filteredTypes.removeAtIndex(index)
+        }
       }
-    }
-    
-    let result = Array<SearchConfig>(filteredTypes.map() { SearchConfig(name: $0, type: .Type) })
-    if !result.isEmpty {
-      task.setResult(result)
-    }
-    else {
-      task.setResult(nil)
+      
+      let result = Array<SearchConfig>(filteredTypes.map() { SearchConfig(name: $0, type: .Type) })
+      if !result.isEmpty {
+        task.setResult(result)
+      }
+      else {
+        task.setResult(nil)
+      }
     }
     
     return task.task
