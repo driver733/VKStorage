@@ -16,7 +16,7 @@ class SearchQuery {
     "Documents"   : ["pdf"],
     "Archieves"   : ["rar", "zip"],
     "Pictures"    : ["jpg", "png", "jpeg"],
-    "Animations"  : ["gif", ""],
+    "Animations"  : ["gif"],
     "Other"       : []
   ]
   
@@ -50,48 +50,55 @@ class SearchQuery {
   }
   
   //Implement dispatch_async?
-  func suggestConfiguration(suggest: String) -> [(String, [SearchConfig])] {
+  func suggestConfiguration(suggest: String, completion: (result: [(String, [SearchConfig])]) -> Void) {
     
     if suggest.isEmpty {
       //Default return
-      return defaultSuggest()
+      completion(result: defaultSuggest())
+      return
     }
     
-    var suggestions = [(String, [SearchConfig])]()
+    let tasks = [
+      extentionsStartingWith(suggest),
+      datesStartingWith(suggest),
+      typesStartingWith(suggest)
+    ]
     
-    extentionsStartingWith(suggest).continueWithBlock { (task: BFTask) -> AnyObject? in
-      if let a = task.result as? [SearchConfig] {
-        suggestions.append(self.extentionsName, a)
+    BFTask(forCompletionOfAllTasksWithResults: tasks).continueWithBlock { (task: BFTask) -> AnyObject? in
+      let results = task.result as! NSArray
+      
+      var suggestions = [(String, [SearchConfig])]()
+      
+      for (_, result) in results.enumerate() {
+        if let config = result as? [SearchConfig] {
+          switch config.first!.type {
+          case .Extention:
+            suggestions.append(self.extentionsName, config)
+          case .Date:
+            suggestions.append(self.datesName, config)
+          case .Type:
+            suggestions.append(self.typesName, config)
+          default:
+            print("Default called?")
+          }
+        }
       }
+      
+      suggestions.append((self.beginsWithName, [SearchConfig(name: suggest, type: .Beginning)]))
+      suggestions.append((self.endsWithName,   [SearchConfig(name: suggest, type: .Ending)]))
+      
+      completion(result: suggestions)
       return nil
     }
-    
-    datesStartingWith(suggest).continueWithBlock { (task: BFTask) -> AnyObject? in
-      if let a = task.result as? [SearchConfig] {
-        suggestions.append(self.datesName, a)
-      }
-      return nil
-    }
-    
-    typesStartingWith(suggest).continueWithBlock { (task: BFTask) -> AnyObject? in
-      if let a = task.result as? [SearchConfig] {
-        suggestions.append(self.typesName, a)
-      }
-      return nil
-    }
-    
-    suggestions.append((beginsWithName, [SearchConfig(name: suggest, type: .Beginning)]))
-    suggestions.append((endsWithName,   [SearchConfig(name: suggest, type: .Ending)]))
-    
-    return suggestions
+        
   }
   
   func extentionsStartingWith(str: String) -> BFTask {
     let task = BFTaskCompletionSource()
-    let filteredDocs = self.docs.filter() { $0.ext.lowercaseString.hasPrefix(str.lowercaseString) }
+    let filteredDocs = docs.filter() { $0.ext.lowercaseString.hasPrefix(str.lowercaseString) }
     
     let filteredExts = filteredDocs.map() { $0.ext }
-    dispatch_async(dispatch_queue_create("q1", nil)) { () -> Void in
+    dispatch_async(dispatch_queue_create("com.bibo-ram.vkstorage.query.1", nil)) { () -> Void in
       var extentions = Set<SearchConfig>()
       
       for ext in filteredExts {
@@ -100,7 +107,6 @@ class SearchQuery {
         }
       }
       let result = Array<SearchConfig>(extentions)
-      print(result.first?.name)
       if !result.isEmpty {
         task.setResult(result)
       }
@@ -116,15 +122,19 @@ class SearchQuery {
     
     let dateFormatter = NSDateFormatter()
     dateFormatter.dateFormat = "MMMM yyyy"
-    let filteredDocs = self.docs.filter() { dateFormatter.stringFromDate($0.date).lowercaseString.hasPrefix(str.lowercaseString) }
+    let filteredDocs = docs.filter { (doc: Document) -> Bool in
+      let a = dateFormatter.stringFromDate(doc.date)
+      return a.lowercaseString.hasPrefix(str.lowercaseString)
+    } //{ dateFormatter.stringFromDate($0.date).lowercaseString.hasPrefix(str.lowercaseString) }
     
-    let filteredDates = filteredDocs.map() { dateFormatter.stringFromDate($0.date) }
+    let filteredStringDates = filteredDocs.map() { dateFormatter.stringFromDate($0.date) }
     
-    dispatch_async(dispatch_queue_create("q2", nil)) { () -> Void in
+    dispatch_async(dispatch_queue_create("com.bibo-ram.vkstorage.query.2", nil)) { () -> Void in
       
       var stringDates = Set<SearchConfig>()
 
-      for date in filteredDates {
+      for date in filteredStringDates {
+        print(date)
         if !self.namesArray(self.configurations[self.datesName]!).contains(date) {
           stringDates.insert(SearchConfig(name: date, type: .Date))
         }
@@ -137,15 +147,16 @@ class SearchQuery {
         task.setResult(nil)
       }
     }
-    
     return task.task
   }
   
   func typesStartingWith(str: String) -> BFTask {
     let task = BFTaskCompletionSource()
     
-    dispatch_async(dispatch_queue_create("q3", nil)) { () -> Void in
-      var filteredTypes = Array<String>(self.documentTypes.keys).filter() { $0.lowercaseString.hasPrefix(str.lowercaseString) }
+    dispatch_async(dispatch_queue_create("com.bibo-ram.vkstorage.query.3", nil)) { () -> Void in
+      var filteredTypes = Array<String>(self.documentTypes.keys).filter({ (key: String) -> Bool in
+        return key.lowercaseString.hasPrefix(str.lowercaseString)
+      })
       
       //config here is a String, refactor?
       for config in (self.namesArray(self.configurations[self.typesName]!)) {
@@ -154,15 +165,18 @@ class SearchQuery {
         }
       }
       
-      let result = Array<SearchConfig>(filteredTypes.map() { SearchConfig(name: $0, type: .Type) })
+      let result = Array<SearchConfig>(filteredTypes.map({ (type: String) -> SearchConfig in
+        return SearchConfig(name: type, type: .Type)
+      }))
+      
       if !result.isEmpty {
         task.setResult(result)
       }
       else {
         task.setResult(nil)
       }
+      
     }
-    
     return task.task
   }
   
@@ -187,7 +201,6 @@ class SearchQuery {
         }
         return Array<SearchConfig>(datesSet)
       }())
-      
     ]
   }
   

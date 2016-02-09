@@ -20,13 +20,23 @@
          contextName = "FilesVC.(refresh(FilesVC) -&gt; (AnyObject?) -&gt; ()).(closure #1):FilesVC.swift">
          <PersistentStrings>
             <PersistentString
-               value = "SearchQuery().suggestConfiguration(&quot;g&quot;)&#10;SearchQuery().suggestConfiguration(&quot;g&quot;)&#10;">
+               value = "SearchQuery().suggestConfiguration(&quot;Dec&quot;)">
             </PersistentString>
+         </PersistentStrings>
+      </ContextState>
+      <ContextState
+         contextName = "SearchQuery.(datesStartingWith(SearchQuery) -&gt; (String) -&gt; BFTask).(closure #1):SearchQuery.swift">
+         <PersistentStrings>
             <PersistentString
-               value = "SearchQuery().suggestConfiguration(&quot;&quot;)">
+               value = "dateFormatter.stringFromDate(docs[0].date)">
             </PersistentString>
+         </PersistentStrings>
+      </ContextState>
+      <ContextState
+         contextName = "SearchQuery.datesStartingWith(String) -&gt; BFTask:SearchQuery.swift">
+         <PersistentStrings>
             <PersistentString
-               value = "SearchQuery().suggestConfiguration(&quot;g&quot;)[0].1[0].name">
+               value = "docs">
             </PersistentString>
          </PersistentStrings>
       </ContextState>
