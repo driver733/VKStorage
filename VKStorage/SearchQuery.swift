@@ -37,8 +37,8 @@ class SearchQuery {
       .Extention : [SearchConfig](),
       .Date      : [SearchConfig](),
       .CType     : [SearchConfig](),
-      .Beginning : [SearchConfig](),
-      .Ending    : [SearchConfig]()
+      .Beginning : [SearchConfig]()
+//      .Ending    : [SearchConfig]()
     ]
   }
   
@@ -52,11 +52,11 @@ class SearchQuery {
     }
     
     let tasks = [
-      searchSuggestionWith(suggest, forSearchConfigType: .Extention),
-      searchSuggestionWith(suggest, forSearchConfigType: .Date),
-      searchSuggestionWith(suggest, forSearchConfigType: .CType),
       searchSuggestionWith(suggest, forSearchConfigType: .Beginning),
-      searchSuggestionWith(suggest, forSearchConfigType: .Ending)
+      searchSuggestionWith(suggest, forSearchConfigType: .CType),
+      searchSuggestionWith(suggest, forSearchConfigType: .Extention),
+      searchSuggestionWith(suggest, forSearchConfigType: .Date)
+//      searchSuggestionWith(suggest, forSearchConfigType: .Ending)
     ]
     
     BFTask(forCompletionOfAllTasksWithResults: tasks).continueWithBlock { (task: BFTask) -> AnyObject? in
@@ -70,7 +70,7 @@ class SearchQuery {
         }
       }
       
-      completion(result: suggestions.sort() { $0.0.0.caseInsensitiveCompare($0.1.0) == NSComparisonResult.OrderedAscending })
+      completion(result: suggestions)
       return nil
     }
         
@@ -110,13 +110,15 @@ class SearchQuery {
           task.setResult(nil)
         }
       })
-    case .Beginning, .Ending:
+    case .Beginning:
       if !str.isEmpty {
-        task.setResult(str)
+        task.setResult(str+"...")
       }
       else {
         task.setResult(nil)
       }
+    case .Ending:
+      print("WTF ENDING?")
     }
 
     if forSearchConfigType == .Date || forSearchConfigType == .Extention {
@@ -233,7 +235,7 @@ enum SearchConfigType : String {
   //Type is a reserved word? Type.rawValue doesn't work for some reason
   case CType     = "Types"
   case Extention = "Extentions"
-  case Beginning = "Beginning with"
+  case Beginning = "Name"
   case Ending    = "Ending with"
 }
 
