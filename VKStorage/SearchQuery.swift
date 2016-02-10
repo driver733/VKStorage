@@ -36,17 +36,16 @@ class SearchQuery {
   private let beginsWithName = "Begins with:"
   private let endsWithName   = "Ends with:"
   
-  private var configurations : [String : [SearchConfig]]
+  private var configurations : [SearchConfigType : [SearchConfig]]
   
   init() {
     configurations = [
-      extentionsName : [SearchConfig](),
-      datesName      : [SearchConfig](),
-      typesName      : [SearchConfig](),
-      beginsWithName : [SearchConfig](),
-      endsWithName   : [SearchConfig]()
+      .Extention : [SearchConfig](),
+      .Date      : [SearchConfig](),
+      .Type      : [SearchConfig](),
+      .Beginning : [SearchConfig](),
+      .Ending    : [SearchConfig]()
     ]
-//    configurations = [SearchConfig]()
   }
   
   //Implement dispatch_async?
@@ -54,7 +53,7 @@ class SearchQuery {
     
     if suggest.isEmpty {
       //Default return
-      completion(result: defaultSuggest())
+      completion(result: defaultSuggest().sort { $0.0.0.caseInsensitiveCompare($0.1.0) == NSComparisonResult.OrderedAscending })
       return
     }
     
@@ -71,26 +70,23 @@ class SearchQuery {
       
       for (_, result) in results.enumerate() {
         if let config = result as? [SearchConfig] {
-          switch config.first!.type {
-          case .Extention:
-            suggestions.append(self.extentionsName, config)
-          case .Date:
-            suggestions.append(self.datesName, config)
-          case .Type:
-            suggestions.append(self.typesName, config)
-          default:
-            print("Default called?")
-          }
+          suggestions.append(((config.first?.type.rawValue)!, config))
         }
       }
       
       suggestions.append((self.beginsWithName, [SearchConfig(name: suggest, type: .Beginning)]))
       suggestions.append((self.endsWithName,   [SearchConfig(name: suggest, type: .Ending)]))
       
-      completion(result: suggestions)
+      completion(result: suggestions.sort() { $0.0.0.caseInsensitiveCompare($0.1.0) == NSComparisonResult.OrderedAscending })
       return nil
     }
         
+  }
+  
+  func startingWith(str: String, forSearchConfigType: SearchConfigType) -> BFTask {
+    let task = BFTaskCompletionSource()
+//    var filtered =
+    return task.task
   }
   
   func extentionsStartingWith(str: String) -> BFTask {
@@ -102,7 +98,7 @@ class SearchQuery {
       var extentions = Set<SearchConfig>()
       
       for ext in filteredExts {
-        if !self.namesArray(self.configurations[self.extentionsName]!).contains(ext) {
+        if !self.namesArray(self.configurations[.Extention]!).contains(ext) {
           extentions.insert(SearchConfig(name: ext, type: .Extention))
         }
       }
@@ -125,7 +121,7 @@ class SearchQuery {
     let filteredDocs = docs.filter { (doc: Document) -> Bool in
       let a = dateFormatter.stringFromDate(doc.date)
       return a.lowercaseString.hasPrefix(str.lowercaseString)
-    } //{ dateFormatter.stringFromDate($0.date).lowercaseString.hasPrefix(str.lowercaseString) }
+    }
     
     let filteredStringDates = filteredDocs.map() { dateFormatter.stringFromDate($0.date) }
     
@@ -135,7 +131,7 @@ class SearchQuery {
 
       for date in filteredStringDates {
         print(date)
-        if !self.namesArray(self.configurations[self.datesName]!).contains(date) {
+        if !self.namesArray(self.configurations[.Date]!).contains(date) {
           stringDates.insert(SearchConfig(name: date, type: .Date))
         }
       }
@@ -159,7 +155,7 @@ class SearchQuery {
       })
       
       //config here is a String, refactor?
-      for config in (self.namesArray(self.configurations[self.typesName]!)) {
+      for config in (self.namesArray(self.configurations[.Type]!)) {
         if let index = filteredTypes.indexOf(config) {
           filteredTypes.removeAtIndex(index)
         }
@@ -205,21 +201,16 @@ class SearchQuery {
   }
   
   func addConfiguration(conf: SearchConfig) -> Bool {
-    switch conf.type {
-    case .Extention:
-      configurations[extentionsName]?.append(conf)
-    case .Type:
-      configurations[typesName]?.append(conf)
-    case .Date:
-      configurations[datesName]?.append(conf)
-    case .Beginning:
-      configurations[beginsWithName]?.append(conf)
-    case .Ending:
-      configurations[endsWithName]?.append(conf)
-//    default:
-//      return false
-    }
+    configurations[conf.type]?.append(conf)
     return true
+  }
+  
+  func removeConfiguration(conf: SearchConfig) -> Bool {
+    if let index = configurations[conf.type]?.indexOf(conf) {
+      configurations[conf.type]?.removeAtIndex(index)
+      return true
+    }
+    return false
   }
   
   func getDocs() -> [Document] {
@@ -267,12 +258,12 @@ class SearchQuery {
   
 }
 
-enum SearchConfigType {
-  case Date
-  case Type
-  case Extention
-  case Beginning
-  case Ending
+enum SearchConfigType : String {
+  case Date      = "Dates:"
+  case Type      = "Types:"
+  case Extention = "Extentions:"
+  case Beginning = "Beginning with:"
+  case Ending    = "Ending with:"
 }
 
 class SearchConfig: AnyObject, Hashable {
@@ -284,12 +275,6 @@ class SearchConfig: AnyObject, Hashable {
   var hashValue : Int {
     return name.hashValue
   }
-  
-//  init(name: String, shortName: String, type: SearchConfigType) {
-//    self.name      = name
-//    self.shortName = shortName
-//    self.type      = type
-//  }
   
   init(name: String, type: SearchConfigType) {
     self.name      = name
