@@ -152,25 +152,25 @@ class SearchQuery {
   
   func defaultSuggest() -> [(String, [SearchConfig])] {
     return [
-      (SearchConfigType.CType.rawValue     , Array<SearchConfig>(documentTypes.keys.map() { SearchConfig(name: $0, type: .CType) })),
+      (SearchConfigType.CType.rawValue     , Array<SearchConfig>(documentTypes.keys.map() { SearchConfig(name: $0, type: .CType) }).sort() { $0.0.name.localizedCaseInsensitiveCompare($0.1.name) == NSComparisonResult.OrderedAscending }),
       (SearchConfigType.Extention.rawValue , {
         var extentionsSet = Set<SearchConfig>()
         for doc in docs {
           extentionsSet.insert(SearchConfig(name: doc.ext, type: .Extention))
         }
-        return Array<SearchConfig>(extentionsSet)
-      }()),
-      (SearchConfigType.Date.rawValue      , {
-        var datesSet = Set<SearchConfig>()
-        
-        let dateFormatter = NSDateFormatter()
-        dateFormatter.dateFormat = "MMMM yyyy"
-        
-        for doc in docs {
-          datesSet.insert(SearchConfig(name: dateFormatter.stringFromDate(doc.date), type: .Date))
-        }
-        return Array<SearchConfig>(datesSet)
+        return Array<SearchConfig>(extentionsSet).sort() { $0.0.name.localizedCaseInsensitiveCompare($0.1.name) == NSComparisonResult.OrderedAscending }
       }())
+//      (SearchConfigType.Date.rawValue      , {
+//        var datesSet = Set<SearchConfig>()
+//        
+//        let dateFormatter = NSDateFormatter()
+//        dateFormatter.dateFormat = "MMMM yyyy"
+//        
+//        for doc in docs {
+//          datesSet.insert(SearchConfig(name: dateFormatter.stringFromDate(doc.date), type: .Date))
+//        }
+//        return Array<SearchConfig>(datesSet)
+//      }())
     ]
   }
   
