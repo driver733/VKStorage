@@ -13,11 +13,11 @@ class SearchQuery {
   private var docs = CurrentUser.sharedCurrentUser().documentArray.documents
   
   private let documentTypes = [
-    "Documents"   : ["pdf"],
-    "Archieves"   : ["rar", "zip"],
-    "Pictures"    : ["jpg", "png", "jpeg"],
     "Animations"  : ["gif"],
-    "Other"       : []
+    "Archieves"   : ["rar", "zip"],
+    "Documents"   : ["pdf"],
+    "Other"       : [],
+    "Pictures"    : ["jpg", "png", "jpeg"]
   ]
   
   private var knownTypes : [String] {
@@ -67,7 +67,6 @@ class SearchQuery {
       for (_, result) in results.enumerate() {
         if let config = result as? [SearchConfig] {
           suggestions.append(((config.first?.type.rawValue)!, config))
-//          print("\(index) : \(config)")
         }
       }
       
@@ -126,7 +125,17 @@ class SearchQuery {
             configSet.insert(SearchConfig(name: token, type: forSearchConfigType))
           }
         }
-        let result = Array<SearchConfig>(configSet)
+        var result = Array<SearchConfig>(configSet)
+        if forSearchConfigType == .Date {
+          let df = NSDateFormatter()
+          df.dateFormat = "MMMM yyyy"
+          result.sortInPlace() { df.dateFromString($0.0.name)!.compare(df.dateFromString($0.1.name)!) == NSComparisonResult.OrderedDescending }
+        }
+        
+        if forSearchConfigType == .Extention {
+          result.sortInPlace() { $0.0.name.compare($0.1.name) == NSComparisonResult.OrderedAscending }
+        }
+        
         if !result.isEmpty {
           task.setResult(result)
         }
@@ -213,10 +222,6 @@ class SearchQuery {
       }
     }
     return Array<Document>(docSet)
-  }
-  
-  func namesArray(source: [SearchConfig]) -> [String] {
-    return source.map() { $0.name }
   }
   
 }
