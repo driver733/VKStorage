@@ -130,12 +130,15 @@ class FilesVC: UIViewController {
         self.title = "\(CurrentUser.sharedCurrentUser().documentArray.documents.count) Документов"
         self.refreshControl.endRefreshing()
         self.tableView.reloadData()
-        print("\n")
-        SearchQuery().suggestConfiguration("") { (result: [(String, [SearchConfig])]) in
-          print("returned")
+        let a = SearchQuery()
+        a.suggestConfiguration("p") { (result: [(String, [SearchConfig])]) in
           for i in result {
-            print(i.1.map() { ($0.name) })
+            print("\(i.0) \(i.1.map() { ($0.name) })")
           }
+        }
+        a.addConfiguration(SearchConfig(name: "Documents", type: .Type))
+        for doc in a.getDocs() {
+          print(doc.title)
         }
       })
       return nil
