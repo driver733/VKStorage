@@ -30,19 +30,13 @@ class SearchQuery {
     return types
   }
   
-  private let extentionsName = "Extentions:"
-  private let datesName      = "Dates:"
-  private let typesName      = "Types:"
-  private let beginsWithName = "Begins with:"
-  private let endsWithName   = "Ends with:"
-  
   private var configurations : [SearchConfigType : [SearchConfig]]
   
   init() {
     configurations = [
       .Extention : [SearchConfig](),
       .Date      : [SearchConfig](),
-      .Type      : [SearchConfig](),
+      .CType     : [SearchConfig](),
       .Beginning : [SearchConfig](),
       .Ending    : [SearchConfig]()
     ]
@@ -58,9 +52,11 @@ class SearchQuery {
     }
     
     let tasks = [
-      extentionsStartingWith(suggest),
-      datesStartingWith(suggest),
-      typesStartingWith(suggest)
+      searchSuggestionWith(suggest, forSearchConfigType: .Extention),
+      searchSuggestionWith(suggest, forSearchConfigType: .Date),
+      searchSuggestionWith(suggest, forSearchConfigType: .CType),
+      searchSuggestionWith(suggest, forSearchConfigType: .Beginning),
+      searchSuggestionWith(suggest, forSearchConfigType: .Ending)
     ]
     
     BFTask(forCompletionOfAllTasksWithResults: tasks).continueWithBlock { (task: BFTask) -> AnyObject? in
@@ -71,11 +67,9 @@ class SearchQuery {
       for (_, result) in results.enumerate() {
         if let config = result as? [SearchConfig] {
           suggestions.append(((config.first?.type.rawValue)!, config))
+//          print("\(index) : \(config)")
         }
       }
-      
-      suggestions.append((self.beginsWithName, [SearchConfig(name: suggest, type: .Beginning)]))
-      suggestions.append((self.endsWithName,   [SearchConfig(name: suggest, type: .Ending)]))
       
       completion(result: suggestions.sort() { $0.0.0.caseInsensitiveCompare($0.1.0) == NSComparisonResult.OrderedAscending })
       return nil
@@ -83,110 +77,79 @@ class SearchQuery {
         
   }
   
-  func startingWith(str: String, forSearchConfigType: SearchConfigType) -> BFTask {
+  func searchSuggestionWith(var str: String, forSearchConfigType: SearchConfigType) -> BFTask {
     let task = BFTaskCompletionSource()
-//    var filtered =
-    return task.task
-  }
-  
-  func extentionsStartingWith(str: String) -> BFTask {
-    let task = BFTaskCompletionSource()
-    let filteredDocs = docs.filter() { $0.ext.lowercaseString.hasPrefix(str.lowercaseString) }
     
-    let filteredExts = filteredDocs.map() { $0.ext }
-    dispatch_async(dispatch_queue_create("com.bibo-ram.vkstorage.query.1", nil)) { () -> Void in
-      var extentions = Set<SearchConfig>()
-      
-      for ext in filteredExts {
-        if !self.namesArray(self.configurations[.Extention]!).contains(ext) {
-          extentions.insert(SearchConfig(name: ext, type: .Extention))
+    str = str.lowercaseString
+    let existentConfigsNames = configurations[forSearchConfigType]!.map() { $0.name }
+    var filtered = [String]()
+    var q = dispatch_get_main_queue()
+    
+    //Don't implement !existentConfigNames.contains() checks here,
+    //except for .CType since Document cannot be accessed in an async call.
+    //If check is completed within async block further on, paralleling will be 
+    //more efficient for large amount of data
+    switch forSearchConfigType {
+    case .Extention:
+      q = dispatch_queue_create("com.bibo-ram.vkstorage.query.1", nil)
+      filtered = (docs.filter() { $0.ext.lowercaseString.hasPrefix(str) }).map() { $0.ext }
+    case .Date:
+      q = dispatch_queue_create("com.bibo-ram.vkstorage.query.2", nil)
+      let df = NSDateFormatter()
+      df.dateFormat = "MMMM yyyy"
+      filtered = (docs.filter() { df.stringFromDate($0.date).lowercaseString.hasPrefix(str) }).map() { df.stringFromDate($0.date) }
+    case .CType:
+      q = dispatch_queue_create("com.bibo-ram.vkstorage.query.3", nil)
+      dispatch_async(q, { 
+        filtered = Array<String>(self.documentTypes.keys).filter() { $0.lowercaseString.hasPrefix(str) && !existentConfigsNames.contains($0) }
+        if !filtered.isEmpty {
+          task.setResult(filtered.map() { SearchConfig(name: $0, type: .CType) })
         }
-      }
-      let result = Array<SearchConfig>(extentions)
-      if !result.isEmpty {
-        task.setResult(result)
-      }
-      else {
-        task.setResult(nil)
-      }
-    }
-    return task.task
-  }
-  
-  func datesStartingWith(str: String) -> BFTask {
-    let task = BFTaskCompletionSource()
-    
-    let dateFormatter = NSDateFormatter()
-    dateFormatter.dateFormat = "MMMM yyyy"
-    let filteredDocs = docs.filter { (doc: Document) -> Bool in
-      let a = dateFormatter.stringFromDate(doc.date)
-      return a.lowercaseString.hasPrefix(str.lowercaseString)
-    }
-    
-    let filteredStringDates = filteredDocs.map() { dateFormatter.stringFromDate($0.date) }
-    
-    dispatch_async(dispatch_queue_create("com.bibo-ram.vkstorage.query.2", nil)) { () -> Void in
-      
-      var stringDates = Set<SearchConfig>()
-
-      for date in filteredStringDates {
-        print(date)
-        if !self.namesArray(self.configurations[.Date]!).contains(date) {
-          stringDates.insert(SearchConfig(name: date, type: .Date))
+        else {
+          task.setResult(nil)
         }
-      }
-      let result = Array<SearchConfig>(stringDates)
-      if !result.isEmpty {
-        task.setResult(result)
-      }
-      else {
-        task.setResult(nil)
-      }
-    }
-    return task.task
-  }
-  
-  func typesStartingWith(str: String) -> BFTask {
-    let task = BFTaskCompletionSource()
-    
-    dispatch_async(dispatch_queue_create("com.bibo-ram.vkstorage.query.3", nil)) { () -> Void in
-      var filteredTypes = Array<String>(self.documentTypes.keys).filter({ (key: String) -> Bool in
-        return key.lowercaseString.hasPrefix(str.lowercaseString)
       })
-      
-      //config here is a String, refactor?
-      for config in (self.namesArray(self.configurations[.Type]!)) {
-        if let index = filteredTypes.indexOf(config) {
-          filteredTypes.removeAtIndex(index)
-        }
-      }
-      
-      let result = Array<SearchConfig>(filteredTypes.map({ (type: String) -> SearchConfig in
-        return SearchConfig(name: type, type: .Type)
-      }))
-      
-      if !result.isEmpty {
-        task.setResult(result)
+    case .Beginning, .Ending:
+      if !str.isEmpty {
+        task.setResult(str)
       }
       else {
         task.setResult(nil)
       }
-      
     }
+
+    if forSearchConfigType == .Date || forSearchConfigType == .Extention {
+      dispatch_async(q) {
+        var configSet = Set<SearchConfig>()
+        for token in filtered {
+          if !existentConfigsNames.contains(token) {
+            configSet.insert(SearchConfig(name: token, type: forSearchConfigType))
+          }
+        }
+        let result = Array<SearchConfig>(configSet)
+        if !result.isEmpty {
+          task.setResult(result)
+        }
+        else {
+          task.setResult(nil)
+        }
+      }
+    }
+    
     return task.task
   }
   
   func defaultSuggest() -> [(String, [SearchConfig])] {
     return [
-      (self.typesName      , Array<SearchConfig>(documentTypes.keys.map() { SearchConfig(name: $0, type: .Type) })),
-      (self.extentionsName , {
+      (SearchConfigType.CType.rawValue     , Array<SearchConfig>(documentTypes.keys.map() { SearchConfig(name: $0, type: .CType) })),
+      (SearchConfigType.Extention.rawValue , {
         var extentionsSet = Set<SearchConfig>()
         for doc in docs {
           extentionsSet.insert(SearchConfig(name: doc.ext, type: .Extention))
         }
         return Array<SearchConfig>(extentionsSet)
       }()),
-      (self.datesName      , {
+      (SearchConfigType.Date.rawValue      , {
         var datesSet = Set<SearchConfig>()
         
         let dateFormatter = NSDateFormatter()
@@ -241,7 +204,7 @@ class SearchQuery {
           for i in result {
             docSet.insert(i)
           }
-        case .Type:
+        case .CType:
           let result = docs.filter() { documentTypes[config.name]!.contains($0.ext.lowercaseString) || (config.name == "Other" && !knownTypes.contains($0.ext.lowercaseString)) }
           for i in result {
             docSet.insert(i)
@@ -259,11 +222,12 @@ class SearchQuery {
 }
 
 enum SearchConfigType : String {
-  case Date      = "Dates:"
-  case Type      = "Types:"
-  case Extention = "Extentions:"
-  case Beginning = "Beginning with:"
-  case Ending    = "Ending with:"
+  case Date      = "Dates"
+  //Type is a reserved word? Type.rawValue doesn't work for some reason
+  case CType     = "Types"
+  case Extention = "Extentions"
+  case Beginning = "Beginning with"
+  case Ending    = "Ending with"
 }
 
 class SearchConfig: AnyObject, Hashable {
