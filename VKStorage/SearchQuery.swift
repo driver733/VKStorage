@@ -133,7 +133,7 @@ class SearchQuery {
         }
         
         if forSearchConfigType == .Extention {
-          result.sortInPlace() { $0.0.name.compare($0.1.name) == NSComparisonResult.OrderedAscending }
+          result.sortInPlace() { $0.0.name.localizedCaseInsensitiveCompare($0.1.name) == NSComparisonResult.OrderedAscending }
         }
         
         if !result.isEmpty {
