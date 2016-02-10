@@ -102,7 +102,9 @@ class SearchQuery {
       dispatch_async(q, { 
         filtered = Array<String>(self.documentTypes.keys).filter() { $0.lowercaseString.hasPrefix(str) && !existentConfigsNames.contains($0) }
         if !filtered.isEmpty {
-          task.setResult(filtered.map() { SearchConfig(name: $0, type: .CType) })
+          var types = filtered.map() { SearchConfig(name: $0, type: .CType) }
+          types.sortInPlace() { $0.0.name.localizedCaseInsensitiveCompare($0.1.name) == NSComparisonResult.OrderedAscending }
+          task.setResult(types)
         }
         else {
           task.setResult(nil)
