@@ -13,18 +13,28 @@ import QuickLook
   func progressDidChange(completionPercentage: Float)
 }
 
+class NimbusCellInfo {
+  var image: UIImage!
+  var description: String!
+}
+
 class FilesVC: UIViewController {
-  
+  var searchQuery: SearchQuery!
   let tableView = UITableView()
   var searchBar = NimbusSearchBar()
   var searchBarController: UISearchDisplayController!
   let addTableView = UITableView()
   let tintView = UIView()
   var refreshControl = UIRefreshControl()
+  var searchResults = [(String, [SearchConfig])]()
+  var searchBarCellData = [String]()
   
   override func viewDidLoad() {
-    super.viewDidLoad()
-    view = tableView
+
+    view.addSubview(tableView)
+    
+//    search.defaultSuggest().keys
+    
 
     tableView.dataSource = self
     tableView.delegate = self
@@ -32,6 +42,7 @@ class FilesVC: UIViewController {
     tableView.estimatedRowHeight = 44.0
     tableView.tableFooterView = UIView(frame: CGRectZero)
     tableView.registerNib(UINib(nibName: "DocumentCell", bundle: nil), forCellReuseIdentifier: "DocumentCell")
+    tableView.frame = UIScreen.mainScreen().bounds
     tableView.addSubview(refreshControl)
     
     addTableView.hidden = true
@@ -44,16 +55,26 @@ class FilesVC: UIViewController {
     
     refreshControl.addTarget(self, action: "refresh:", forControlEvents: UIControlEvents.ValueChanged)
   
-   // automaticallyAdjustsScrollViewInsets = false
+
   //  edgesForExtendedLayout = .None
     navigationItem.rightBarButtonItem = UIBarButtonItem(barButtonSystemItem: .Add, target: self, action: "didTapAddButton:")
     
 
 //    self.navigationController!.navigationBar.translucent = true
-    
+    searchBar = NimbusSearchBar()
+    searchBar.frame = CGRectMake(0, 0, view.bounds.width, 44)
+    searchBar.nimbusSearchBarDelegate = self
+    searchBar.dimsBackgroundDuringPresentation = false
     
     refreshControl.beginRefreshing()
     refresh(nil)
+    
+//    searchBarCellsInfo.append("trip")
+//    searchBarCellsInfo.append("michael")
+//    searchBarCellsInfo.append("university")
+    
+    
+    super.viewDidLoad()
   }
   
 
@@ -75,38 +96,35 @@ class FilesVC: UIViewController {
 //   
 //  }
   
+  func didTapAddTableViewDimmingView(rec: UITapGestureRecognizer) {
+    dismissAddTableView()
+  }
+  
   override func viewDidAppear(animated: Bool) {
     tintView.frame = UIScreen.mainScreen().bounds
     tintView.alpha = 0
     tintView.backgroundColor = UIColor.blackColor()
+    let tap = UITapGestureRecognizer(target: self, action: "didTapAddTableViewDimmingView:")
+    tintView.addGestureRecognizer(tap)
     view.addSubview(tintView)
-    
-    searchBar.placeholder = "Search"
-    searchBar.frame = CGRectMake(0, 0, view.bounds.width, 44)
-    searchBar.nimbusSearchBarDelegate = self
     tableView.tableHeaderView = searchBar
     tableView.contentOffset = CGPoint(x: 0, y: -64+tableView.tableHeaderView!.frame.height)
     NSNotificationCenter.defaultCenter().postNotificationName(MAIN_TAB_BAR_VC_VIEW_DID_APPEAR, object: nil)
-    addTableView.frame = CGRectMake(0, -176, view.bounds.size.width, 176)
-    view.addSubview(addTableView)
-
-    
+    addTableView.frame = CGRectMake(0, -44*4, view.bounds.size.width, 44*4)
+    addTableView.hidden = true
+    self.view.addSubview(addTableView)
     searchBarController = UISearchDisplayController(searchBar: searchBar, contentsController: self)
     searchDisplayController!.delegate = self
     searchDisplayController!.searchResultsDataSource = self
     searchDisplayController!.searchResultsDelegate = self
-    
-
-    
+    super.viewDidAppear(animated)
   }
   
   func rec(view: UIView) {
     NSTimer.after(10) { () -> Void in
-      
-    
         if view.isKindOfClass(UIButton) {
 //          (view as! UIButton).addTarget(self, action: "push:", forControlEvents: .TouchUpInside)
-          print((view as! UIButton))
+
         }
   //  print(view)
     for subView in view.subviews {
@@ -114,7 +132,7 @@ class FilesVC: UIViewController {
     }
     }
   }
-  
+
   func skip(indexPath: NSIndexPath) -> Int {
     var skip = 0
     for var section=0; section<indexPath.section; section++ {
@@ -122,7 +140,6 @@ class FilesVC: UIViewController {
     }
     return skip
   }
-  
   func refresh(sender: AnyObject?) {
     CurrentUser.sharedCurrentUser().loadDocuments().continueWithSuccessBlock { (task: BFTask) -> AnyObject? in
       dispatch_async(dispatch_get_main_queue(), { () -> Void in
@@ -130,60 +147,49 @@ class FilesVC: UIViewController {
         self.title = "\(CurrentUser.sharedCurrentUser().documentArray.documents.count) Документов"
         self.refreshControl.endRefreshing()
         self.tableView.reloadData()
-        let a = SearchQuery()
-        a.suggestConfiguration("p") { (result: [(String, [SearchConfig])]) in
-          for i in result {
-            print("\(i.0) \(i.1.map() { ($0.name) })")
-          }
-        }
-        a.addConfiguration(SearchConfig(name: "Documents", type: .Type))
-        for doc in a.getDocs() {
-          print(doc.title)
-        }
+        self.searchQuery = SearchQuery()
+        
+//        let docs = CurrentUser.sharedCurrentUser().rootDir.docs
+//        CurrentUser.sharedCurrentUser().rootDir.mkdir("abdul")
+//        CurrentUser.sharedCurrentUser().rootDir.moveDocument(docs[0], toDir: CurrentUser.sharedCurrentUser().rootDir.childrenDirectories.objectAtIndex(0) as! AbstractDirectory)
+//        CurrentUser.sharedCurrentUser().currentDir = CurrentUser.sharedCurrentUser().rootDir.childrenDirectories.objectAtIndex(0) as! AbstractDirectory
+//        for doc in CurrentUser.sharedCurrentUser().currentDir.docs {
+//          print(doc.title)
+//        }
       })
       return nil
     }
-//    let docs = CurrentUser.sharedCurrentUser().rootDir.docs
-//    CurrentUser.sharedCurrentUser().rootDir.mkdir("abdul")
-//    CurrentUser.sharedCurrentUser().rootDir.moveDocument(docs[0], toDir: CurrentUser.sharedCurrentUser().rootDir.childrenDirectories.objectAtIndex(0) as! AbstractDirectory)
-//    CurrentUser.sharedCurrentUser().currentDir = CurrentUser.sharedCurrentUser().rootDir.childrenDirectories.objectAtIndex(0) as! AbstractDirectory
-//    for doc in CurrentUser.sharedCurrentUser().currentDir.docs {
-//      print(doc.title)
-//    }
-  }
-  
-  func didTapAddButton(sender: UIBarButtonItem) {
-    rec(self.view)
-    if addTableView.hidden {
-      addTableView.hidden = false
-      UIView.animateWithDuration(0.26) { () -> Void in
-        let addTableViewBounds = self.addTableView.bounds
-        self.addTableView.frame = CGRectMake(0, 0, addTableViewBounds.width, addTableViewBounds.height)
-        self.tintView.alpha = 0.5
-      }
-    } else {
-      UIView.animateWithDuration(0.26, animations: { () -> Void in
-        let addTableViewBounds = self.addTableView.bounds
-        self.addTableView.frame = CGRectMake(0, -addTableViewBounds.height, addTableViewBounds.width, addTableViewBounds.height)
-        self.tintView.alpha = 0
-        }, completion: { (result: Bool) -> Void in
-          if result {
-            self.addTableView.hidden = true
-          }
-      })
     }
-//    if (searchDisplayController!.active) {
-//      searchDisplayController?.active = false
-//    } else {
-//      searchDisplayController?.active = true
-//    }
-    
-  }
-  
-}
 
+  func didTapAddButton(sender: UIBarButtonItem) {
+    NSTimer.after(3) { () -> Void in
+     // self.searchBarCellsInfo.append("sheesh")
+      //self.searchBar.tableView.reload()
+    }
+    
+//    if addTableView.hidden {
+//      addTableView.hidden = false
+//      UIView.animateWithDuration(0.35) { () -> Void in
+//        self.addTableView.frame.origin = CGPointMake(0, self.addTableView.frame.origin.y + self.addTableView.bounds.height + 64)
+//        self.tintView.alpha = 0.5
+//      }
+//    } else {
+//      dismissAddTableView()
+//    }
+  }
+  func dismissAddTableView() {
+    UIView.animateWithDuration(0.35, animations: { () -> Void in
+      let addTableViewBounds = self.addTableView.bounds
+      self.addTableView.frame = CGRectMake(0, -addTableViewBounds.height, addTableViewBounds.width, addTableViewBounds.height)
+      self.tintView.alpha = 0
+      }, completion: { (result: Bool) -> Void in
+        if result {
+          self.addTableView.hidden = true
+        }
+    })
+  }
+}
 extension FilesVC : UITableViewDataSource {
-  
   func tableView(tableView: UITableView, cellForRowAtIndexPath indexPath: NSIndexPath) -> UITableViewCell {
     if tableView == self.tableView {
       let cell = tableView.dequeueReusableCellWithIdentifier("DocumentCell", forIndexPath: indexPath) as! DocumentCell
@@ -217,8 +223,9 @@ extension FilesVC : UITableViewDataSource {
       return cell
     } else {
       let cell = UITableViewCell()
-      cell.textLabel?.text = "test"
-    
+      let searchRes = searchResults[indexPath.section].1[indexPath.row]
+      cell.textLabel?.text = searchRes.name
+      
       return cell
     }
     return UITableViewCell()
@@ -231,17 +238,21 @@ extension FilesVC : UITableViewDataSource {
       } else {
         return 0
       }
+    } else if tableView == searchDisplayController?.searchResultsTableView {
+      return searchResults[section].1.count
     } else {
-      if self.searchDisplayController?.searchResultsTableView != nil {
-        print(searchDisplayController?.searchResultsTableView.hidden)
-      }
       return 4
     }
   }
   
   func tableView(tableView: UITableView, titleForHeaderInSection section: Int) -> String? {
-    if let docs = CurrentUser.sharedCurrentUser().documentArray {
-      return docs.sortInfo.titleForHeaderInSection[section]
+    if tableView == self.tableView {
+      if let docs = CurrentUser.sharedCurrentUser().documentArray {
+        return docs.sortInfo.titleForHeaderInSection[section]
+      }
+    }
+    else {
+      return searchResults[section].0
     }
     return ""
   }
@@ -252,6 +263,9 @@ extension FilesVC : UITableViewDataSource {
         return docs.sortInfo.numberOfSections
       }
     }
+    else {
+      return searchResults.count
+    }
     return 1
   }
 
@@ -260,28 +274,61 @@ extension FilesVC : UITableViewDataSource {
 
 extension FilesVC : UITableViewDelegate {
   
+//  func tableView(tableView: UITableView, viewForHeaderInSection section: Int) -> UIView? {
+//    let view = UIView(frame: CGRectMake(0, 0, 200, 40))
+//    view. add
+//  }
+  
+  func scrollViewDidScroll(scrollView: UIScrollView) {
+    if scrollView == searchDisplayController?.searchResultsTableView && scrollView.contentOffset != CGPointMake(0, -64) {
+      searchBar.textField.endEditing(true)
+    }
+  }
+ 
+  
   func tableView(tableView: UITableView, didEndDisplayingCell cell: UITableViewCell, forRowAtIndexPath indexPath: NSIndexPath) {
     CurrentUser.sharedCurrentUser().documentArray.documents[indexPath.row+skip(indexPath)].progressDelegate = nil
   }
   
   func tableView(tableView: UITableView, didSelectRowAtIndexPath indexPath: NSIndexPath) {
-    let doc = CurrentUser.sharedCurrentUser().documentArray.documents[indexPath.row+skip(indexPath)]
-    if doc.isCached {
-      let previewQL = QLPreviewController()
-      previewQL.dataSource = self
-      if #available(iOS 8.0, *) {
-        showViewController(previewQL, sender: nil)
-      } else {
-        presentViewController(previewQL, animated: true, completion: nil)
+    switch tableView {
+    case self.tableView:
+      let doc = CurrentUser.sharedCurrentUser().documentArray.documents[indexPath.row+skip(indexPath)]
+      if doc.isCached {
+        let previewQL = QLPreviewController()
+        previewQL.dataSource = self
+        if #available(iOS 8.0, *) {
+          showViewController(previewQL, sender: nil)
+        } else {
+          presentViewController(previewQL, animated: true, completion: nil)
+        }
+      } else if !doc.isLoading {
+        let cell = tableView.cellForRowAtIndexPath(indexPath) as! DocumentCell
+        cell.progressView.hidden = false
+        doc.downloadVK()
       }
-    } else if !doc.isLoading {
-      let cell = tableView.cellForRowAtIndexPath(indexPath) as! DocumentCell
-      cell.progressView.hidden = false
-      doc.downloadVK()
+    case searchBar.tableView:
+      print("seeeee")
+    case searchDisplayController!.searchResultsTableView:
+      let searchObj = searchResults[indexPath.section].1[indexPath.row]
+      print(searchObj.name)
+      if let shortName = searchObj.shortName {
+        searchBarCellData.append(shortName)
+      } else {
+        searchBarCellData.append(searchObj.name)
+      }
+      searchBar.tableView.reload()
+    case addTableView:
+      break
+    default:
+      break
     }
+  
+  
   }
-
 }
+
+
 
 extension FilesVC : QLPreviewControllerDataSource {
   
@@ -300,13 +347,16 @@ extension FilesVC : QLPreviewControllerDataSource {
 }
 
 extension FilesVC : UISearchDisplayDelegate {
-  func searchDisplayControllerWillBeginSearch(controller: UISearchDisplayController) {
-    print("")
-  }
   
-  func searchDisplayController(controller: UISearchDisplayController, didShowSearchResultsTableView tableView: UITableView) {
-    print("")
-  }
+  
+  
+//  func searchDisplayControllerWillBeginSearch(controller: UISearchDisplayController) {
+//    print("")
+//  }
+//  
+//  func searchDisplayController(controller: UISearchDisplayController, didShowSearchResultsTableView tableView: UITableView) {
+//    print("")
+//  }
   
   func searchDisplayController(controller: UISearchDisplayController, willUnloadSearchResultsTableView tableView: UITableView) {
     
@@ -320,8 +370,8 @@ extension FilesVC : UISearchDisplayDelegate {
  
   
   func searchDisplayController(controller: UISearchDisplayController, shouldReloadTableForSearchString searchString: String?) -> Bool {
-  //  searchDisplayController?.searchResultsTableView.hidden = false
-    print(searchString)
+    
+
     return true
   }
   
@@ -330,25 +380,40 @@ extension FilesVC : UISearchDisplayDelegate {
 
 extension FilesVC : NimbusSearchBarDelegate {
 
+  func nimbusSearchBarTableView(searchBar: NimbusSearchBar!, descriptionForRow row: Int) -> String {
+    return searchBarCellData[row]
+  }
+  
+  func nimbusSearchBarTableView(searchBar: NimbusSearchBar!, iconImageForRow row: Int) -> UIImage {
+    return UIImage()
+  }
+  
+  func nimbusSearchBarTableViewNumberOfRows(searchBar: NimbusSearchBar!) -> Int {
+    return searchBarCellData.count
+  }
+  func nimbusSearchBarCancelButtonClicked(searchBar: NimbusSearchBar) {
+    searchBarCellData.removeAll(keepCapacity: false)
+  }
+  func nimbusSearchBarTextDidBeginEditing(searchBar: NimbusSearchBar) {
+    searchResults = searchQuery.defaultSuggest()
+  }
+  
+  func nimbusSearchBar(searchBar: NimbusSearchBar, textDidChange searchText: String) {
+    searchQuery.suggestConfiguration(searchText, completion: { (result: [(String, [SearchConfig])]) -> Void in
+      self.searchResults = result
+      dispatch_async(dispatch_get_main_queue(), { () -> Void in
+        self.searchDisplayController?.searchResultsTableView.reloadData()
+      })
+    })
+  }
   
   
 }
-
-
-
-
 extension FilesVC : DocsProcessingDelegate {
-  
   func didFinishProcessingDocs() {
     print("DID FINISH PROCESSING DOCS")
   }
-  
 }
-
-
-
-
-
 
 
 
