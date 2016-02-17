@@ -43,7 +43,9 @@ typedef NS_ENUM(NSUInteger, EasyTableViewOrientation) {
 - (UITableViewCell *)easyTableView:(EasyTableView *)easyTableView cellForRowAtIndexPath:(NSIndexPath *)indexPath;
 @optional
 - (NSUInteger)numberOfSectionsInEasyTableView:(EasyTableView*)easyTableView;
-- (void)easyTableView:(EasyTableView *)tableView didSelectRowAtIndexPath:(NSIndexPath *)indexPath;
+- (NSIndexPath *)easyTableView:(EasyTableView *)easyTableView willSelectRowAtIndexPath:(NSIndexPath *)indexPath;
+- (void)easyTableView:(EasyTableView *)easyTableView didSelectRowAtIndexPath:(NSIndexPath *)indexPath;
+- (void)easyTableView:(EasyTableView *)easyTableView didDeselectRowAtIndexPath:(NSIndexPath *)indexPath;
 - (UIView*)easyTableView:(EasyTableView*)easyTableView viewForHeaderInSection:(NSInteger)section;
 - (UIView*)easyTableView:(EasyTableView*)easyTableView viewForFooterInSection:(NSInteger)section;
 - (CGFloat)easyTableView:(EasyTableView *)easyTableView heightOrWidthForCellAtIndexPath:(NSIndexPath *)indexPath;

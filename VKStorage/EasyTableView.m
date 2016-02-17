@@ -182,6 +182,19 @@
     }
 }
 
+-(void)tableView:(UITableView *)tableView didDeselectRowAtIndexPath:(NSIndexPath *)indexPath {
+  if ([self.delegate respondsToSelector:@selector(easyTableView:didDeselectRowAtIndexPath:)]) {
+    [self.delegate easyTableView:self didDeselectRowAtIndexPath:indexPath];
+  }
+}
+
+- (nullable NSIndexPath *)tableView:(UITableView *)tableView willSelectRowAtIndexPath:(NSIndexPath *)indexPath {
+  if ([self.delegate respondsToSelector:@selector(easyTableView:willSelectRowAtIndexPath:)]) {
+    return [self.delegate easyTableView:self willSelectRowAtIndexPath:indexPath];
+  }
+  return indexPath;
+}
+
 - (CGFloat)tableView:(UITableView *)tableView heightForRowAtIndexPath:(NSIndexPath *)indexPath {
     if ([self.delegate respondsToSelector:@selector(easyTableView:heightOrWidthForCellAtIndexPath:)]) {
         return [self.delegate easyTableView:self heightOrWidthForCellAtIndexPath:indexPath];

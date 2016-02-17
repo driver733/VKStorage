@@ -58,6 +58,23 @@ extension NSDate {
   
 }
 
+extension UIColor {
+  convenience init(r: CGFloat, g: CGFloat, b: CGFloat) {
+    self.init(red: r/255, green: g/255, blue: b/255, alpha: 1.0)
+  }
+  convenience init(r: CGFloat, g: CGFloat, b: CGFloat, a: CGFloat) {
+    self.init(red: r/255, green: g/255, blue: b/255, alpha: a)
+  }
+  class func searchBarSelectionBaseViewColor() -> UIColor {
+    return UIColor(r: 0, g: 122, b: 255)
+  }
+  class func searchBarSelectionBarColor() -> UIColor {
+    return UIColor(r: 20, g: 111, b: 225)
+  }
+  class func searchBarBaseViewColor() -> UIColor {
+    return UIColor(r: 161, g: 161, b: 161)
+  }
+}
 
 extension String {
   subscript (i: Int) -> Character {

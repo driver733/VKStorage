@@ -311,7 +311,7 @@ extension FilesVC : UITableViewDelegate {
       print("seeeee")
     case searchDisplayController!.searchResultsTableView:
       let searchObj = searchResults[indexPath.section].1[indexPath.row]
-      print(searchObj.name)
+      
       if let shortName = searchObj.shortName {
         searchBarCellData.append(shortName)
       } else {

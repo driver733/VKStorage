@@ -8,7 +8,29 @@
 
 import Foundation
 
+extension UIView {
+  
+  func subviewOfClass(ofClass: UIView.Type) -> UIView? {
+    if self.isKindOfClass(ofClass) {
+      return self
+    }
+    for view in subviews {
+      return view.subviewOfClass(ofClass)
+    }
+    return nil
+  }
+  
+  func superviewOfClass(ofClass: UIView.Type) -> UIView? {
+    if self.isKindOfClass(ofClass) {
+      return self
+    }
+    return superview?.superviewOfClass(ofClass)
+  }
+  
+}
+
 extension NimbusCell {
+  
   func imageWithColor(color: UIColor, size: CGSize) -> UIImage {
     let rect = CGRectMake(0, 0, size.width, size.height)
     UIGraphicsBeginImageContextWithOptions(size, false, 0)
@@ -18,14 +40,35 @@ extension NimbusCell {
     UIGraphicsEndImageContext()
     return image
   }
+  
 }
 
-
 let nimbusCellReuseIdentifier = "NimbusSearchBarCellReuseIdentifier"
+//let nimbusTextFieldCellReuseIdentifier = "NimbusSearchBarTextFieldCellReuseIdentifier"
+
+
+//class NimbusTextFieldCell: UITableViewCell {
+//  
+//  override init(style: UITableViewCellStyle, reuseIdentifier: String?) {
+//    super.init(style: style, reuseIdentifier: reuseIdentifier)
+//    
+//    
+//    
+//  }
+//  
+//  required init?(coder aDecoder: NSCoder) {
+//    super.init(coder: aDecoder)
+//  }
+//  
+//  convenience init() {
+//    self.init(style: .Default, reuseIdentifier: nimbusTextFieldCellReuseIdentifier)
+//  }
+//  
+//}
 
 class NimbusCell: UITableViewCell {
   
-  let baseView = UIView()
+  let baseView = UITextField()
   let label = UILabel()
   let iconImageView = UIImageView()
   
@@ -41,17 +84,18 @@ class NimbusCell: UITableViewCell {
   
   convenience init(description: String) {
     self.init(style: .Default, reuseIdentifier: nimbusCellReuseIdentifier)
-    userInteractionEnabled = true
     selectionStyle = .None
-    baseView.backgroundColor = UIColor.lightGrayColor()
+    baseView.delegate = self
+   // NSNotificationCenter.defaultCenter().addObserver(self, selector: "cellTextDidChange:", name: UITextFieldTextDidChangeNotification, object: nil)
+    baseView.tintColor = UIColor.clearColor()
+    baseView.textColor = .clearColor()
+   // baseView.font = UIFont.systemFontOfSize(0)
+    baseView.backgroundColor = UIColor.searchBarBaseViewColor()
     baseView.layer.cornerRadius = 4
-    baseView.userInteractionEnabled = false
     iconImageView.image = imageWithColor(.greenColor(), size: CGSizeMake(20, 20))
-    iconImageView.userInteractionEnabled = false
     label.text = description
-    label.font = UIFont.systemFontOfSize(UIFont.systemFontSize())
+    label.font =  label.font?.fontWithSize(UIFont.systemFontSize())
     label.textColor = .whiteColor()
-    label.userInteractionEnabled = false
     textSize = (description as NSString).sizeWithAttributes([NSFontAttributeName : label.font])
     textSize = CGSizeMake(textSize.width+6, textSize.height+6)
     baseView.addSubview(label)
@@ -59,17 +103,17 @@ class NimbusCell: UITableViewCell {
     contentView.addSubview(baseView)
     contentView.transform = CGAffineTransformMakeRotation(CGFloat(M_PI)/2) // rotate by 90 degrees
     iconImageViewHeight = textSize.height/2
-    baseView.snp_remakeConstraints { (make) -> Void in
+    baseView.snp_makeConstraints { (make) -> Void in
       make.top.leading.equalTo(3)
       make.bottom.trailing.equalTo(-3)
     }
-    iconImageView.snp_remakeConstraints { (make) -> Void in
+    iconImageView.snp_makeConstraints { (make) -> Void in
       make.leading.equalTo(iconImageViewLeading)
       make.centerY.equalTo(baseView.bounds.midY)
       make.width.equalTo(iconImageView.snp_height)
       make.height.equalTo(textSize.height/2)
     }
-    label.snp_remakeConstraints { (make) -> Void in
+    label.snp_makeConstraints { (make) -> Void in
       make.leading.equalTo(iconImageView.snp_trailing).offset(labelLeadingOffset)
       make.trailing.equalTo(labelTrailing).priorityLow()
       make.width.lessThanOrEqualTo(120).priorityRequired()
@@ -81,12 +125,52 @@ class NimbusCell: UITableViewCell {
     super.init(coder: aDecoder)
   }
   
-  override func prepareForReuse() {
-    print(backgroundColor)
+}
+
+extension NimbusCell : UITextFieldDelegate {
+  
+  func textFieldDidBeginEditing(textField: UITextField) {
+    textField.backgroundColor = UIColor.searchBarSelectionBarColor()
+  }
+  
+  func textFieldDidEndEditing(textField: UITextField) {
+     textField.backgroundColor = UIColor.searchBarBaseViewColor()
+  }
+  
+  func textField(textField: UITextField, shouldChangeCharactersInRange range: NSRange, replacementString string: String) -> Bool {
+    label.hidden = true
+    iconImageView.hidden = true
+    baseView.backgroundColor = .clearColor()
+    baseView.layer.cornerRadius = 0
+    baseView.font = UIFont.systemFontOfSize(UIFont.systemFontSize())
+    baseView.tintColor = .blueColor()
+    baseView.textColor = .blackColor()
+    let searchBar = superviewOfClass(NimbusSearchBar) as? NimbusSearchBar
+    let tableView = superviewOfClass(EasyTableView) as? EasyTableView
+    if let searchBar = searchBar, tableView = tableView, indexPath = tableView.tableView.indexPathForCell(self) {
+      if searchBar.editingIndexPaths.contains(indexPath) {
+        searchBar.editingTextForRowAtEditingIndexPath[indexPath.row] = textField.text!  // replace string in range
+      } else {
+        searchBar.editingIndexPaths.append(indexPath)
+        searchBar.editingTextForRowAtEditingIndexPath.append(textField.text!)  // replace string in range
+      }
+      
+      if bounds.size.height < (textField.text! as NSString).sizeWithAttributes([NSFontAttributeName : textField.font!]).width {
+        NSNotificationCenter.defaultCenter().addObserver(self, name: UITextFieldTextDidChangeNotification, object: nil, handler: { (observer, notification) -> Void in
+          if let _ = (notification.object as! UITextField).superviewOfClass(NimbusCell) {
+            dispatch_async(dispatch_get_main_queue(), { () -> Void in
+              tableView.tableView.beginUpdates()
+              tableView.tableView.endUpdates()
+            })
+          }
+        })
+      }
+      //searchBar.nimbusSearchBarDelegate?.nimbusSearchBar(searchBar, shouldChangeTextInRange: range, replacementText: string)
+    }
+    return true
   }
   
 }
-
 
 class HorizontalUITextField: UITextField {
   
@@ -143,7 +227,11 @@ class NimbusSearchBar: UISearchBar {
   }
   private var currentEditingTextFieldWidth: CGFloat!
   private var defaultHeaderWidth: CGFloat!
+  private var editingIndexPaths = [NSIndexPath]()
+  private var editingTextForRowAtEditingIndexPath = [String]()
+
   var dimsBackgroundDuringPresentation = true
+  
   override init(frame: CGRect) {
     super.init(frame: frame)
   }
@@ -155,6 +243,7 @@ class NimbusSearchBar: UISearchBar {
   override func drawRect(rect: CGRect) {
     addTableView()
   }
+  
   
   func removeGestureRecognizersInSubViews(view: UIView) {
 //    if view.isKindOfClass(UIButton) {
@@ -182,7 +271,7 @@ class NimbusSearchBar: UISearchBar {
     tableView.orientation = .Horizontal
     tableView.delegate = self
     tableView.tableView.allowsSelection = true
-   // tableView.tableView.scrollEnabled = false
+
     backgroundView = UIView(frame: searchBarTextField.frame)
     backgroundView.layer.cornerRadius = 5
     backgroundView.clipsToBounds = true
@@ -193,8 +282,8 @@ class NimbusSearchBar: UISearchBar {
     defaultTextFieldWidth = searchBarTextField.bounds.width
     currentEditingTextFieldWidth = defaultEditingTextFieldWidth
     textField = HorizontalUITextField(frame: CGRectMake(0, 0, defaultEditingTextFieldWidth, 0))
-//    textField.backgroundColor = .redColor()
-    NSNotificationCenter.defaultCenter().addObserver(self, selector: "textFieldTextDidChange:", name: UITextFieldTextDidChangeNotification, object: nil)
+ 
+    // NSNotificationCenter.defaultCenter().addObserver(self, selector: "textFieldTextDidChange:", name: UITextFieldTextDidChangeNotification, object: nil)
     textField.delegate = self
     tableView.tableView.tableFooterView = textField
     tableView.contentOffset = CGPointMake(0, 0)
@@ -209,22 +298,32 @@ class NimbusSearchBar: UISearchBar {
       make.centerX.equalTo(0)
     }
   }
+  
   func click(rec: UITapGestureRecognizer) {
     textField.endEditing(true)
   }
+  
   func textFieldTextDidChange(notif: NSNotification) {
     delegate?.searchBar?(self, textDidChange: textField.text!)
   }
+  
 }
+
 extension NimbusSearchBar : EasyTableViewDelegate {
+  
   func easyTableView(easyTableView: EasyTableView!, heightOrWidthForCellAtIndexPath indexPath: NSIndexPath!) -> CGFloat {
     let cell = easyTableView.delegate!.easyTableView(easyTableView, cellForRowAtIndexPath: indexPath) as! NimbusCell
-    var size = CGSizeMake(0, cell.textSize.width + cell.iconImageViewHeight + cell.iconImageViewLeading + cell.labelLeadingOffset + cell.labelTrailing)
-    if size.height > 120 {
-      size = CGSizeMake(0, 120+25)
+    if editingIndexPaths.contains(indexPath) {
+      return (cell.baseView.text! as NSString).sizeWithAttributes([NSFontAttributeName : cell.baseView.font!]).width + 10
+    } else {
+      var size = CGSizeMake(0, cell.textSize.width + cell.iconImageViewHeight + cell.iconImageViewLeading + cell.labelLeadingOffset + cell.labelTrailing)
+      if size.height > 120 {
+        size.height += 25
+      }
+      return size.height
     }
-    return size.height
   }
+  
   func easyTableView(easyTableView: EasyTableView!, numberOfRowsInSection section: Int) -> Int {
     var numberOfRows = nimbusSearchBarDelegate!.nimbusSearchBarTableViewNumberOfRows(self)
     if cancel {
@@ -256,8 +355,6 @@ extension NimbusSearchBar : EasyTableViewDelegate {
           }
           self.currentEditingTextFieldWidth = footer.bounds.size.width
         }
-      
-
         NSTimer.after(0.1, { () -> Void in
           // MARK: Refactor to scrollViewDidScroll
           if footer.bounds.size.width == 70 {
@@ -270,7 +367,6 @@ extension NimbusSearchBar : EasyTableViewDelegate {
           //        self.tableView.setContentOffset(CGPointMake(self.tableView.tableView.contentSize.height - self.tableView.bounds.width, 0), animated: true)
           self.tableView.tableView.tableFooterView = self.tableView.tableView.tableFooterView
         })
-
       default:
         break
       }
@@ -285,26 +381,39 @@ extension NimbusSearchBar : EasyTableViewDelegate {
     if cell == nil {
       cell = NimbusCell(description: description)
     }
- 
-    cell!.label.text = description
-    cell!.textSize = (description as NSString).sizeWithAttributes([NSFontAttributeName : cell!.label.font])
-    cell!.textSize = CGSizeMake(cell!.textSize.width+6, cell!.textSize.height+6)
+    if editingIndexPaths.contains(indexPath) {
+      cell!.label.hidden = true
+      cell!.iconImageView.hidden = true
+      cell!.baseView.backgroundColor = .whiteColor()
+      cell!.baseView.text = editingTextForRowAtEditingIndexPath[indexPath.row]
+    } else {
+      cell!.label.text = description
+      cell!.textSize = (description as NSString).sizeWithAttributes([NSFontAttributeName : cell!.label.font])
+      cell!.textSize = CGSizeMake(cell!.textSize.width+5, cell!.textSize.height+5)
+    }
 
     return cell!
   }
-  func easyTableView(tableView: EasyTableView!, didSelectRowAtIndexPath indexPath: NSIndexPath!) {
-    let cell = tableView.delegate?.easyTableView(tableView, cellForRowAtIndexPath: indexPath) as! NimbusCell
-    cell.label.text = ""
-    cell.backgroundColor = .redColor()
-    print(cell.backgroundColor)
-    tableView.tableView.reloadRowsAtIndexPaths([indexPath], withRowAnimation: .Automatic)
-    tableView.tableView.deselectRowAtIndexPath(indexPath, animated: false)
-  }
+  
+//  func easyTableView(easyTableView: EasyTableView!, didSelectRowAtIndexPath indexPath: NSIndexPath!) {
+//    let cell = tableView.tableView.cellForRowAtIndexPath(indexPath) as! NimbusCell
+//    cell.baseView.backgroundColor = UIColor.searchBarSelectionBaseViewColor()
+//    (cell.contentView.subviews[0] as! UITextField).becomeFirstResponder()
+//   // textField.endEditing(true)
+//  }
+//  
+//  func easyTableView(easyTableView: EasyTableView!, didDeselectRowAtIndexPath indexPath: NSIndexPath!) {
+//    let cell = tableView.tableView.cellForRowAtIndexPath(indexPath) as! NimbusCell
+//    cell.baseView.backgroundColor = UIColor.searchBarBaseViewColor()
+//  }
+  
 }
 extension NimbusSearchBar : UITextFieldDelegate {
+  
   func textFieldShouldReturn(textField: UITextField) -> Bool {
     return true
   }
+  
   func textFieldShouldClear(textField: UITextField) -> Bool {
     if let currentTextFieldWidth = currentTextFieldWidth {
       tableView.tableView.tableFooterView?.bounds.size.width = currentTextFieldWidth
@@ -312,10 +421,12 @@ extension NimbusSearchBar : UITextFieldDelegate {
     tableView.tableView.tableFooterView = tableView.tableView.tableFooterView
     return true
   }
+  
   func textFieldShouldBeginEditing(textField: UITextField) -> Bool {
     delegate?.searchBarShouldBeginEditing?(self)
     return true
   }
+  
   func textFieldDidBeginEditing(textField: UITextField) {
     // MARK: Investigate why searchResultsTableView.hidden is false initially
     struct Tokens { static var token: dispatch_once_t = 0 }
@@ -340,7 +451,12 @@ extension NimbusSearchBar : UITextFieldDelegate {
       })
       delegate?.searchBarTextDidBeginEditing?(self)
     }
+    if let selectedRow = tableView.tableView.indexPathForSelectedRow {
+      tableView.tableView.deselectRowAtIndexPath(selectedRow, animated: false)
+      tableView.delegate?.easyTableView?(tableView, didDeselectRowAtIndexPath: selectedRow)
+    }
   }
+  
   func textFieldDidEndEditing(textField: UITextField) {
     if UIViewController.currentViewController().searchDisplayController!.searchResultsTableView.hidden || cancel {
       let header = self.tableView.tableView.tableHeaderView!
@@ -368,37 +484,40 @@ extension NimbusSearchBar : UITextFieldDelegate {
       delegate?.searchBarTextDidEndEditing?(self)
       }
   }
+  
   func textFieldShouldEndEditing(textField: UITextField) -> Bool {
     delegate?.searchBarShouldEndEditing?(self)
     return true
   }
+  
   func textField(textField: UITextField, shouldChangeCharactersInRange range: NSRange, replacementString string: String) -> Bool {
-    let footer = tableView.tableView.tableFooterView!
+//    let textFieldWidth = textField.bounds.size.width
     if easyTableView(tableView, numberOfRowsInSection: 0) > 0 {
       let textFieldTextWidth = ((textField.text!) as NSString).sizeWithAttributes([NSFontAttributeName : textField.font!]).width
       if string.characters.count == 0 || string == " " {  // empty string == remove last symbol button
         let toBeRemovedText = (textField.text! as NSString).substringWithRange(range)
         let toBeRemovedTextWidth = (toBeRemovedText as NSString).sizeWithAttributes([NSFontAttributeName : textField.font!]).width
         if textFieldTextWidth >= currentEditingTextFieldWidth! - 40 {
-          footer.frame.size.height -= toBeRemovedTextWidth
+          textField.bounds.size.width -= toBeRemovedTextWidth
           let newContentOffset = tableView.contentOffset.x - toBeRemovedTextWidth
           tableView.setContentOffset(CGPointMake(newContentOffset, 0), animated: false)
         }
       }
       let textWidth = (string as NSString).sizeWithAttributes([NSFontAttributeName : textField.font!]).width
-      if textFieldTextWidth + textWidth >= tableView.tableView.tableFooterView!.bounds.width - 40 {
-        footer.bounds.size.width += textWidth
+      if textFieldTextWidth + textWidth >= textField.bounds.width - 40 {
+        textField.bounds.size.width += textWidth
         let newContentOffset = tableView.contentOffset.x + textWidth
         tableView.setContentOffset(CGPointMake(newContentOffset, 0), animated: false)
       }
     }
     else {
-      footer.bounds.size.width = defaultEditingTextFieldWidth
+      textField.bounds.size.width = defaultEditingTextFieldWidth
     }
     tableView.tableView.tableFooterView = tableView.tableView.tableFooterView!
     delegate?.searchBar?(self, shouldChangeTextInRange: range, replacementText: string)
     return true
   }
+  
 }
 
 extension NimbusSearchBar : UISearchBarDelegate {
@@ -415,6 +534,8 @@ extension NimbusSearchBar : UISearchBarDelegate {
         UIViewController.currentViewController().searchDisplayController?.searchContentsController.view.subviews.last?.addSubview(newView)
       }
     }
+    
+  
      // MARK: Move numbers to constants (navbar 64; tabBar 49)
     UIViewController.currentViewController().searchDisplayController?.searchResultsTableView.contentInset = UIEdgeInsetsMake(64, 0, 49, 0)
     
