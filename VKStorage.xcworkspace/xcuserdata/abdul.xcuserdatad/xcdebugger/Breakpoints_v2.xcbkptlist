@@ -31,7 +31,7 @@
             endingColumnNumber = "9223372036854775807"
             startingLineNumber = "158"
             endingLineNumber = "158"
-            landmarkName = "tableView(_:cellForRowAtIndexPath:)"
+            landmarkName = "refresh(_:)"
             landmarkType = "5">
          </BreakpointContent>
       </BreakpointProxy>
@@ -47,7 +47,7 @@
             endingColumnNumber = "9223372036854775807"
             startingLineNumber = "160"
             endingLineNumber = "160"
-            landmarkName = "tableView(_:cellForRowAtIndexPath:)"
+            landmarkName = "refresh(_:)"
             landmarkType = "5">
          </BreakpointContent>
       </BreakpointProxy>

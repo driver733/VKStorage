@@ -18,15 +18,21 @@ class FilesVC: UIViewController {
   
   
   let tableView = UITableView()
+  var searchBar = NimbusSearchBar()
+  var searchBarController: UISearchDisplayController!
   let addTableView = UITableView()
   let tintView = UIView()
   var refreshControl = UIRefreshControl()
   
   override func viewDidLoad() {
     super.viewDidLoad()
+<<<<<<< HEAD
     
     CurrentUser.sharedCurrentUser().delegate = self
+=======
+>>>>>>> 43afead8aee299c64ccac046ea2f5f19109df0eb
     view = tableView
+
     tableView.dataSource = self
     tableView.delegate = self
     tableView.rowHeight = UITableViewAutomaticDimension
@@ -44,10 +50,14 @@ class FilesVC: UIViewController {
     addTableView.registerNib(UINib(nibName: "AddCell", bundle: nil), forCellReuseIdentifier: "AddCell")
     
     refreshControl.addTarget(self, action: "refresh:", forControlEvents: UIControlEvents.ValueChanged)
-    
-    automaticallyAdjustsScrollViewInsets = false
-    edgesForExtendedLayout = .None
+  
+   // automaticallyAdjustsScrollViewInsets = false
+  //  edgesForExtendedLayout = .None
     navigationItem.rightBarButtonItem = UIBarButtonItem(barButtonSystemItem: .Add, target: self, action: "didTapAddButton:")
+    
+
+//    self.navigationController!.navigationBar.translucent = true
+    
     
     refreshControl.beginRefreshing()
     refresh(nil)
@@ -67,11 +77,25 @@ class FilesVC: UIViewController {
     
     print(FCFileManager.pathForDocumentsDirectory())
   }
+  
+
 
   override func didReceiveMemoryWarning() {
     super.didReceiveMemoryWarning()
     // Dispose of any resources that can be recreated.
   }
+  
+  
+//  override func viewDidLayoutSubviews() {
+//    super.viewDidLayoutSubviews()
+//    self.searchBar.layoutIfNeeded()
+//    self.searchBar.layoutSubviews()
+//   
+////    var currentTextFieldBounds = self.searchBar.subviews[0].subviews[1].bounds
+////    currentTextFieldBounds.size.width = 100
+////    self.searchBar.subviews[0].subviews[1].bounds = currentTextFieldBounds
+//   
+//  }
   
   override func viewDidAppear(animated: Bool) {
     tintView.frame = UIScreen.mainScreen().bounds
@@ -79,9 +103,38 @@ class FilesVC: UIViewController {
     tintView.backgroundColor = UIColor.blackColor()
     view.addSubview(tintView)
     
+    searchBar.placeholder = "Search"
+    searchBar.frame = CGRectMake(0, 0, view.bounds.width, 44)
+    searchBar.nimbusSearchBarDelegate = self
+    tableView.tableHeaderView = searchBar
+    tableView.contentOffset = CGPoint(x: 0, y: -64+tableView.tableHeaderView!.frame.height)
     NSNotificationCenter.defaultCenter().postNotificationName(MAIN_TAB_BAR_VC_VIEW_DID_APPEAR, object: nil)
     addTableView.frame = CGRectMake(0, -176, view.bounds.size.width, 176)
     view.addSubview(addTableView)
+
+    
+    searchBarController = UISearchDisplayController(searchBar: searchBar, contentsController: self)
+    searchDisplayController!.delegate = self
+    searchDisplayController!.searchResultsDataSource = self
+    searchDisplayController!.searchResultsDelegate = self
+    
+
+    
+  }
+  
+  func rec(view: UIView) {
+    NSTimer.after(10) { () -> Void in
+      
+    
+        if view.isKindOfClass(UIButton) {
+//          (view as! UIButton).addTarget(self, action: "push:", forControlEvents: .TouchUpInside)
+          print((view as! UIButton))
+        }
+  //  print(view)
+    for subView in view.subviews {
+      self.rec(subView)
+    }
+    }
   }
   
   func skip(indexPath: NSIndexPath) -> Int {
@@ -95,7 +148,7 @@ class FilesVC: UIViewController {
   func refresh(sender: AnyObject?) {
     CurrentUser.sharedCurrentUser().loadDocuments().continueWithSuccessBlock { (task: BFTask) -> AnyObject? in
       dispatch_async(dispatch_get_main_queue(), { () -> Void in
-        CurrentUser.sharedCurrentUser().documentArray.sortByUploadDate(.OrderedAscending)
+        CurrentUser.sharedCurrentUser().documentArray.sortByName(.OrderedAscending)
         self.title = "\(CurrentUser.sharedCurrentUser().documentArray.documents.count) Документов"
         self.refreshControl.endRefreshing()
         self.tableView.reloadData()
@@ -129,6 +182,7 @@ class FilesVC: UIViewController {
   }
   
   func didTapAddButton(sender: UIBarButtonItem) {
+    rec(self.view)
     if addTableView.hidden {
       addTableView.hidden = false
       UIView.animateWithDuration(0.26) { () -> Void in
@@ -147,6 +201,12 @@ class FilesVC: UIViewController {
           }
       })
     }
+//    if (searchDisplayController!.active) {
+//      searchDisplayController?.active = false
+//    } else {
+//      searchDisplayController?.active = true
+//    }
+    
   }
   
 }
@@ -168,7 +228,7 @@ extension FilesVC : UITableViewDataSource {
       cell.infoLabel.text = doc.size
       cell.separatorInset = UIEdgeInsets(top: 0, left: cell.titleLabel.frame.minX, bottom: 0, right: 7)
       return cell
-    } else {
+    } else if tableView == addTableView {
       let cell = tableView.dequeueReusableCellWithIdentifier("AddCell", forIndexPath: indexPath) as! AddCell
       if indexPath.row + 1 == tableView.numberOfRowsInSection(0) {
         cell.separatorInset = UIEdgeInsets(top: 0, left: self.view.bounds.size.width, bottom: 0, right: 0)
@@ -186,7 +246,13 @@ extension FilesVC : UITableViewDataSource {
       default: break
       }
       return cell
+    } else {
+      let cell = UITableViewCell()
+      cell.textLabel?.text = "test"
+    
+      return cell
     }
+    return UITableViewCell()
   }
   
   func tableView(tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
@@ -197,6 +263,9 @@ extension FilesVC : UITableViewDataSource {
         return 0
       }
     } else {
+      if self.searchDisplayController?.searchResultsTableView != nil {
+        print(searchDisplayController?.searchResultsTableView.hidden)
+      }
       return 4
     }
   }
@@ -264,6 +333,7 @@ extension FilesVC : QLPreviewControllerDataSource {
   
 }
 
+<<<<<<< HEAD
 extension FilesVC : DocumentImporterDelegate {
   
   func documentWasPickedAtURL(url: NSURL) {
@@ -279,6 +349,59 @@ extension FilesVC : DocumentImporterDelegate {
   }
   
 }
+=======
+extension FilesVC : UISearchDisplayDelegate {
+  func searchDisplayControllerWillBeginSearch(controller: UISearchDisplayController) {
+    print("")
+  }
+  
+  func searchDisplayController(controller: UISearchDisplayController, didShowSearchResultsTableView tableView: UITableView) {
+    print("")
+  }
+  
+  func searchDisplayController(controller: UISearchDisplayController, willUnloadSearchResultsTableView tableView: UITableView) {
+    
+  }
+  
+  
+  func searchDisplayController(controller: UISearchDisplayController, shouldReloadTableForSearchScope searchOption: Int) -> Bool {
+    
+    return true
+  }
+ 
+  
+  func searchDisplayController(controller: UISearchDisplayController, shouldReloadTableForSearchString searchString: String?) -> Bool {
+  //  searchDisplayController?.searchResultsTableView.hidden = false
+    print(searchString)
+    return true
+  }
+  
+}
+
+
+extension FilesVC : NimbusSearchBarDelegate {
+
+  
+  
+}
+
+
+
+
+extension FilesVC : DocsProcessingDelegate {
+  
+  func didFinishProcessingDocs() {
+    print("DID FINISH PROCESSING DOCS")
+  }
+  
+}
+
+
+
+
+
+
+>>>>>>> 43afead8aee299c64ccac046ea2f5f19109df0eb
 
 extension FilesVC : DocsProcessingDelegate {
   

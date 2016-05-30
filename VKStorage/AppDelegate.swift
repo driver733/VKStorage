@@ -27,7 +27,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
     VKSDKDelegateHandler.sharedInstance.setup { () -> Void in
     }
     
-    if Defaults[.isLoggedIn] {
+    if VKSdk.isLoggedIn() {
       self.window!.rootViewController = MainTabBarVC()
     } else {
       self.window!.rootViewController = LoginVC()

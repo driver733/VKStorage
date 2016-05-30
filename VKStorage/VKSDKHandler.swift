@@ -48,7 +48,6 @@ extension VKSDKDelegateHandler: VKSdkDelegate {
   public func vkSdkAccessAuthorizationFinishedWithResult(result: VKAuthorizationResult!) {
     if result.error == nil {
       NSNotificationCenter.defaultCenter().postNotificationName(VKSDK_ACCESS_AUTHORIZATION_SUCCEEDED, object: nil)
-      Defaults[.isLoggedIn] = true
     } else {
       // auth failed
     }
