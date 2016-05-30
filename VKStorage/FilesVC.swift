@@ -15,6 +15,8 @@ import QuickLook
 
 class FilesVC: UIViewController {
   
+  
+  
   let tableView = UITableView()
   var searchBar = NimbusSearchBar()
   var searchBarController: UISearchDisplayController!
@@ -24,6 +26,11 @@ class FilesVC: UIViewController {
   
   override func viewDidLoad() {
     super.viewDidLoad()
+<<<<<<< HEAD
+    
+    CurrentUser.sharedCurrentUser().delegate = self
+=======
+>>>>>>> 43afead8aee299c64ccac046ea2f5f19109df0eb
     view = tableView
 
     tableView.dataSource = self
@@ -54,6 +61,21 @@ class FilesVC: UIViewController {
     
     refreshControl.beginRefreshing()
     refresh(nil)
+    
+    providesPresentationContextTransitionStyle = true
+    definesPresentationContext = true
+    
+    
+    if #available(iOS 8.0, *) {
+      let a = DocumentImporter()
+      a.launch()
+      a.modalPresentationStyle = .Custom
+      self.presentViewController(a, animated: false, completion: nil)
+    } else {
+      // Fallback on earlier versions
+    }
+    
+    print(FCFileManager.pathForDocumentsDirectory())
   }
   
 
@@ -130,6 +152,7 @@ class FilesVC: UIViewController {
         self.title = "\(CurrentUser.sharedCurrentUser().documentArray.documents.count) Документов"
         self.refreshControl.endRefreshing()
         self.tableView.reloadData()
+<<<<<<< HEAD
         let a = SearchQuery()
         a.suggestConfiguration("p") { (result: [(String, [SearchConfig])]) in
           for i in result {
@@ -140,6 +163,32 @@ class FilesVC: UIViewController {
         for doc in a.getDocs() {
           print(doc.title)
         }
+=======
+        
+        
+//        let docs = CurrentUser.sharedCurrentUser().documentArray.documents
+//        CurrentUser.sharedCurrentUser().rootDir.mkdir("a")
+//        CurrentUser.sharedCurrentUser().rootDir.mkdir("b")
+//        
+//        CurrentUser.sharedCurrentUser().rootDir.moveDocument(docs[0], toDir: AbstractDirectory(forPrimaryKey: "/root/a")!)
+        
+        
+        //
+//        let a = AbstractDirectory(name: "1", parent: nil)
+//        let b = AbstractDirectory(name: "2", parent: a)
+//        b.mkdir("3")
+//        b.mkdir("4")
+//        for i in CurrentUser.sharedCurrentUser().documentArray.documents {
+//          b.addfile(i as Document)
+//        }
+//
+//        realm.beginWriteTransaction()
+//        realm.addObject(a)
+//        realm.addObject(b)
+//        try! realm.commitWriteTransaction()
+//        print(realm.isEmpty)
+
+>>>>>>> origin/newbranch
       })
       return nil
     }
@@ -188,7 +237,9 @@ extension FilesVC : UITableViewDataSource {
     if tableView == self.tableView {
       let cell = tableView.dequeueReusableCellWithIdentifier("DocumentCell", forIndexPath: indexPath) as! DocumentCell
       let doc = CurrentUser.sharedCurrentUser().documentArray.documents[indexPath.row+skip(indexPath)]
+      
       doc.progressDelegate = cell
+      
       if doc.isLoading {
         cell.progressView.hidden = false
       }
@@ -277,7 +328,10 @@ extension FilesVC : UITableViewDelegate {
     } else if !doc.isLoading {
       let cell = tableView.cellForRowAtIndexPath(indexPath) as! DocumentCell
       cell.progressView.hidden = false
+//      dispatch_async(dispatch_get_main_queue(), { () -> Void in
       doc.downloadVK()
+//      })
+      
     }
   }
 
@@ -299,6 +353,23 @@ extension FilesVC : QLPreviewControllerDataSource {
   
 }
 
+<<<<<<< HEAD
+extension FilesVC : DocumentImporterDelegate {
+  
+  func documentWasPickedAtURL(url: NSURL) {
+    
+//    presentViewController(<#T##viewControllerToPresent: UIViewController##UIViewController#>, animated: <#T##Bool#>, completion: <#T##(() -> Void)?##(() -> Void)?##() -> Void#>)
+    let docToUpload = UploadDocument(url: url)
+    print(url)
+//    docToUpload.uploadDoc().continueWithBlock { (task: BFTask) -> AnyObject? in
+//      FCFileManager.copyItemAtPath(url.absoluteString, toPath: FCFileManager.pathForDocumentsDirectory())
+//      return nil
+//    }
+    
+  }
+  
+}
+=======
 extension FilesVC : UISearchDisplayDelegate {
   func searchDisplayControllerWillBeginSearch(controller: UISearchDisplayController) {
     print("")
@@ -350,10 +421,15 @@ extension FilesVC : DocsProcessingDelegate {
 
 
 
+>>>>>>> 43afead8aee299c64ccac046ea2f5f19109df0eb
 
-
-
-
+extension FilesVC : DocsProcessingDelegate {
+  
+  func didFinishProcessingDocs() {
+    print("DID FINISH PROCESSING DOCS")
+  }
+  
+}
 
 
 

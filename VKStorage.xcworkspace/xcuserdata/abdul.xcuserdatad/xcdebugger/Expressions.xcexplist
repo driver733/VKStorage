@@ -3,6 +3,7 @@
    version = "1.0">
    <ContextStates>
       <ContextState
+<<<<<<< HEAD
          contextName = "AppDelegate.application(UIApplication, didFinishLaunchingWithOptions : [NSObject : AnyObject]?) -&gt; Bool:AppDelegate.swift">
       </ContextState>
       <ContextState
@@ -10,10 +11,34 @@
          <PersistentStrings>
             <PersistentString
                value = "Document.objectsWithPredicate(NSPredicate(format: &quot;name == Biboran.gif&quot;, argumentArray: nil))">
+=======
+         contextName = "CurrentUser.login() -&gt; ():CurrentUser.swift">
+         <PersistentStrings>
+            <PersistentString
+               value = "VKSdk.vkAppMayExists()">
             </PersistentString>
          </PersistentStrings>
       </ContextState>
       <ContextState
+         contextName = "+[VKSdk authorize:withOptions:]:VKSdk.m">
+      </ContextState>
+      <ContextState
+         contextName = "+[VKSdk vkAppMayExists]:VKSdk.m">
+      </ContextState>
+      <ContextState
+         contextName = "Document.downloadVK() -&gt; BFTask:Document.swift">
+         <PersistentStrings>
+            <PersistentString
+               value = "isLoading">
+            </PersistentString>
+            <PersistentString
+               value = "fileName">
+>>>>>>> origin/newbranch
+            </PersistentString>
+         </PersistentStrings>
+      </ContextState>
+      <ContextState
+<<<<<<< HEAD
          contextName = "AppDelegate.window.getter:AppDelegate.swift">
       </ContextState>
       <ContextState
@@ -21,22 +46,56 @@
          <PersistentStrings>
             <PersistentString
                value = "SearchQuery().suggestConfiguration(&quot;Dec&quot;)">
+=======
+         contextName = "DocumentArray.init() -&gt; DocumentArray:DocumentArray.swift">
+         <PersistentStrings>
+            <PersistentString
+               value = "documents">
+            </PersistentString>
+            <PersistentString
+               value = "docs.objectAtIndex(0)">
             </PersistentString>
          </PersistentStrings>
       </ContextState>
       <ContextState
+         contextName = "static CurrentUser.sharedCurrentUser() -&gt; CurrentUser:CurrentUser.swift">
+         <PersistentStrings>
+            <PersistentString
+               value = "sharedInstance">
+>>>>>>> origin/newbranch
+            </PersistentString>
+         </PersistentStrings>
+      </ContextState>
+      <ContextState
+<<<<<<< HEAD
          contextName = "SearchQuery.(datesStartingWith(SearchQuery) -&gt; (String) -&gt; BFTask).(closure #1):SearchQuery.swift">
          <PersistentStrings>
             <PersistentString
                value = "dateFormatter.stringFromDate(docs[0].date)">
+=======
+         contextName = "DocumentArray.processVKDocsArray(VKDocsArray) -&gt; BFTask:DocumentArray.swift">
+      </ContextState>
+      <ContextState
+         contextName = "AppDelegate.application(UIApplication, didFinishLaunchingWithOptions : [NSObject : AnyObject]?) -&gt; Bool:AppDelegate.swift">
+         <PersistentStrings>
+            <PersistentString
+               value = "print(FCFileManager.pathForDocumentsDirectory())">
+>>>>>>> origin/newbranch
             </PersistentString>
          </PersistentStrings>
       </ContextState>
       <ContextState
+<<<<<<< HEAD
          contextName = "SearchQuery.datesStartingWith(String) -&gt; BFTask:SearchQuery.swift">
          <PersistentStrings>
             <PersistentString
                value = "docs">
+=======
+         contextName = "FilesVC.tableView(UITableView, cellForRowAtIndexPath : NSIndexPath) -&gt; UITableViewCell:FilesVC.swift">
+         <PersistentStrings>
+            <PersistentString
+               value = "">
+>>>>>>> origin/newbranch
             </PersistentString>
          </PersistentStrings>
       </ContextState>
